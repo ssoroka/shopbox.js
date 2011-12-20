@@ -4,11 +4,17 @@
     <script type="text/javascript" src="shopbox.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
-        $('#my_link').shopbox('http://cvcl.mit.edu/hybrid/cat2.jpg', {type: 'image'});
+        $('#image_link').shopbox('http://cvcl.mit.edu/hybrid/cat2.jpg', {type: 'image'});
+        
+        $('#content_link').shopbox('<h1>Serious cat is not amused.</h1> <img src="http://cvcl.mit.edu/hybrid/cat2.jpg">');
+
+        $('#iframe_link').shopbox('http://shop.shopyasukoazuma.com/');
       });
     </script>
   </head>
   <body>
-    <a href="#" id="my_link">a link</a>
+    <a href="#" id="image_link">image link</a>
+    <a href="#" id="content_link">content link</a>
+    <a href="#" id="iframe_link">iframe link</a>
   </body>
 </html>

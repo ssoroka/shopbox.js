@@ -22,19 +22,24 @@ class ShopBox
       $('.shopbox').remove();
 
 
-  this.getContent = (url, options) ->
-    switch options['type'] || this.typeFromUrl(url)
+  this.getContent = (urlOrContent, options) ->
+    switch options['type'] || this.typeFromUrl(urlOrContent)
       when 'image'
-        return "<img src=\"#{url}\" />"
+        return "<img src=\"#{urlOrContent}\" />"
       when 'iframe'
-        return "<iframe src=\"#{url}\"></iframe>"
+        return "<iframe src=\"#{urlOrContent}\"></iframe>"
+      else
+        return urlOrContent
     
   this.typeFromUrl = (url) ->
-    switch url.split('.').pop()
-      when 'jpg', 'jpeg', 'png', 'bmp', 'gif'
-        return 'image'
-      else 
-        return 'iframe'
+    image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
+    ext = url.split('.').pop().toLowerCase()
+    if image_exts.indexOf(ext) >= 0
+      return 'image'
+    else if url.match(/^https?\:\/\/\S+$/) 
+      return 'iframe'
+    else
+      return 'content'
 
 # extend jQuery    
 jQuery.fn.shopbox = (url, options = {}) ->

@@ -1,0 +1,7 @@
+See the shopbox_example.html
+
+Super simple
+
+to compile the coffee to js:
+
+    coffee -c shopbox.coffee

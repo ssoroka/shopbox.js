@@ -17,7 +17,11 @@ class ShopBox
   '
   this.show = (content) ->
     $('body').prepend this.template.replace('{{content}}', content)
-    
+    # close button click event binding
+    $('.shopbox-close-button').click ->
+      $('.shopbox').remove();
+
+
   this.getContent = (url, options) ->
     switch options['type'] || typeFromUrl(url)
       when 'image'
@@ -32,8 +36,6 @@ class ShopBox
       else 
         return 'iframe'
 
-
-
 # extend jQuery    
 jQuery.fn.shopbox = (url, options) ->
   box = this
@@ -41,7 +43,3 @@ jQuery.fn.shopbox = (url, options) ->
     content = ShopBox.getContent url, options
     ShopBox.show content
     event.preventDefault()
-
-# close button click event binding
-$('.shopbox-close-button').bind 'click', (e) ->
-  $('.shopbox').remove();

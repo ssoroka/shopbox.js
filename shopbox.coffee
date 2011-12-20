@@ -23,21 +23,21 @@ class ShopBox
 
 
   this.getContent = (url, options) ->
-    switch options['type'] || typeFromUrl(url)
+    switch options['type'] || this.typeFromUrl(url)
       when 'image'
         return "<img src=\"#{url}\" />"
       when 'iframe'
         return "<iframe src=\"#{url}\"></iframe>"
     
   this.typeFromUrl = (url) ->
-    switch url.split('.').last()
+    switch url.split('.').pop()
       when 'jpg', 'jpeg', 'png', 'bmp', 'gif'
         return 'image'
       else 
         return 'iframe'
 
 # extend jQuery    
-jQuery.fn.shopbox = (url, options) ->
+jQuery.fn.shopbox = (url, options = {}) ->
   box = this
   box.click (event) -> 
     content = ShopBox.getContent url, options

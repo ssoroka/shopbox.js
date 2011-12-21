@@ -1,9 +1,13 @@
-.shopbox {
-
+div.shopbox {
+  opacity: 0;
+  -webkit-transition: all 0.5s ease-in-out;
 }
 .shopbox-content {
   
 }
 .shopbox-close-button {
   
+}
+.shopbox.shopbox-visible {
+  opacity: 1;
 }

@@ -7,22 +7,40 @@
 #
 # shopbox class
 class ShopBox
+  this.box = null
+
   this.template = '
-    <div class="shopbox">
+    <div class="shopbox" >
       <a class="shopbox-close-button" href="#">x</a>
       <div class="shopbox-content">
-        {{content}}
       </div>
     </div>
   '
   this.show = (content) ->
-    $('body').prepend this.template.replace('{{content}}', content)
-    # close button click event binding
-    $('.shopbox-close-button').click ->
-      $('.shopbox').remove();
+    $('.shopbox').show()
+    setTimeout (->
+      $(".shopbox").addClass "shopbox-visible"
+    ), 0     
 
+  this.init = (url, options) ->
+    if !$('.shopbox').length > 0
+      $('body').prepend this.template
+      $('.shopbox-close-button').click (event) ->
+        event.preventDefault()
+        ShopBox.hide()
 
-  this.getContent = (urlOrContent, options) ->
+  this.hide = () ->
+    $('.shopbox').removeClass('shopbox-visible')
+    $('.shopbox').bind 'webkitTransitionEnd', () ->
+      $('.shopbox').unbind 'webkitTransitionEnd'
+      $('.shopbox').hide();
+  
+  this.setContent = (content) ->
+    $('.shopbox .shopbox-content').html content
+
+  this.getContent = (urlOrContent, options, element) ->
+    if urlOrContent == undefined
+      urlOrContent = element.attr 'href'
     switch options['type'] || this.typeFromUrl(urlOrContent)
       when 'image'
         return "<img src=\"#{urlOrContent}\" />"
@@ -43,8 +61,11 @@ class ShopBox
 
 # extend jQuery    
 jQuery.fn.shopbox = (url, options = {}) ->
-  box = this
-  box.click (event) -> 
-    content = ShopBox.getContent url, options
-    ShopBox.show content
+  element = this
+  ShopBox.init(url, options)
+  element.click (event) -> 
     event.preventDefault()
+    # event.stopPropagation()
+    ShopBox.setContent ShopBox.getContent(url, options, element)
+    ShopBox.show()
+

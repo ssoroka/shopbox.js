@@ -1,16 +1,41 @@
 div.shopbox {
-  opacity: 0;
-  -webkit-transition: all 0.5s ease-in-out;
-  -ms-transition: all 0.5s ease-in-out;
-  -mos-transition: all 0.5s ease-in-out;
-  -o-transition: all 0.5s ease-in-out;
+  -webkit-transition: all 0.15s ease-in-out;
+ 	opacity: 0;
+ 	background: rgba(0,0,0,0.7);
+ 	position: absolute;
+ 	top: 0; bottom: 0; left: 0; right: 0;
 }
-.shopbox-content {
-  
+.shopbox-main {
+	-webkit-transition: all 0.20s ease-in-out;
+	transform: scale(0.5) ;
+	-webkit-transform: scale(0.5); /* Safari and Chrome */
+  border: 20px solid #FFF; margin: 0 auto; background: #FFF; vertical-align: center; width: 400px; height: 400px;
+  position: absolute; top: 50%; left: 50%; margin-left: -200px; margin-top: -200px;
+  box-shadow: 0px 1px 5px #000;
+}
+.shopbox-content * {
+	width: 400px; height: 400px;
 }
 .shopbox-close-button {
-  
+  position: absolute;
+  top: -35px; right: -35px;
+  border: 3px solid #FFF;
+  width: 30px;
+  height: 30px;
+  background: #000;
+  border-radius: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFF; text-decoration: none;
+  text-align: center; line-height: 30px;
+  box-shadow: 0px 1px 3px #000;
 }
 .shopbox.shopbox-visible {
   opacity: 1;
+}
+.shopbox-inner {
+	position: relative;
+}
+.shopbox.shopbox-visible .shopbox-main {
+	transform: scale(1);
+	-webkit-transform: scale(1); /* Safari and Chrome */
 }

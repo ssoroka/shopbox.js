@@ -10,10 +10,13 @@ class ShopBox
   this.box = null
 
   this.template = '
-    <div class="shopbox" >
-      <a class="shopbox-close-button" href="#">x</a>
-      <div class="shopbox-content">
-      </div>
+    <div class="shopbox" style="display: none;">
+      <div class="shopbox-main">
+	      <div class="shopbox-inner">
+      		<a class="shopbox-close-button" href="#">x</a>
+      		<div class="shopbox-content"></div>
+	      </div>
+	    </div>
     </div>
   '
   this.show = (content) ->

@@ -5,3 +5,9 @@ Super simple
 to compile the coffee to js:
 
     coffee -c shopbox.coffee
+
+
+to-do
+  - needs to know height/width of content
+  - styling
+  - spinner wait thing

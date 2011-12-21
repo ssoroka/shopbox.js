@@ -22,7 +22,7 @@ class ShopBox
       $(".shopbox").addClass "shopbox-visible"
     ), 0     
 
-  this.init = (url, options) ->
+  this.init = () ->
     if !$('.shopbox').length > 0
       $('body').prepend this.template
       $('.shopbox-close-button').click (event) ->
@@ -31,8 +31,7 @@ class ShopBox
 
   this.hide = () ->
     $('.shopbox').removeClass('shopbox-visible')
-    $('.shopbox').bind 'webkitTransitionEnd', () ->
-      $('.shopbox').unbind 'webkitTransitionEnd'
+    $('.shopbox').transitionEnd ->
       $('.shopbox').hide();
   
   this.setContent = (content) ->
@@ -62,10 +61,11 @@ class ShopBox
 # extend jQuery    
 jQuery.fn.shopbox = (url, options = {}) ->
   element = this
-  ShopBox.init(url, options)
+  ShopBox.init()
   element.click (event) -> 
     event.preventDefault()
-    # event.stopPropagation()
     ShopBox.setContent ShopBox.getContent(url, options, element)
     ShopBox.show()
 
+jQuery.fn.transitionEnd = (func) ->
+  this.one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func

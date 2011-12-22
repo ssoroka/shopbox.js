@@ -1,5 +1,11 @@
 = Shopbox
 
+  A simple extensible lightbox that separates animation and presentation completely from Javascript.  Animation and styling is all CSS3, no crappy images, no crappy js animations.
+
+  Can display iframes, html, images, whatever
+
+  Doesn't do image galleries or captions, though it should be easy to extend if you really really want that.
+
   See the shopbox_example.html
 
 == Runtime Dependencies

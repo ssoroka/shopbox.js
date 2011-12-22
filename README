@@ -1,15 +1,30 @@
-See the shopbox_example.html
+= Shopbox
 
-Super simple
+  See the shopbox_example.html
 
-to compile the coffee to js:
+== Runtime Dependencies
 
-    coffee -c shopbox.coffee
+  jQuery
 
+== Development Dependencies
 
-to-do
+  Coffeescript
+  Java
+  Rake
+
+  If you change the source, run "rake compile" before checking in so that the minified js is up to date
+
+== Compiling
+
+    rake compile
+
+== To Do
+
   - needs to know height/width of content
   - styling
   - spinner wait thing
 
-  
+== Authors
+
+  Christoper Lobay
+  Steven Soroka

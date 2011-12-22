@@ -38,7 +38,11 @@ class ShopBox
       $('.shopbox').hide();
   
   this.setContent = (content) ->
-    $('.shopbox .shopbox-content').html content
+    contentbox = $('.shopbox .shopbox-content')
+    contentbox.html(content)
+    # find all images, scripts, frames, iframes?
+    # result.load () ->
+    #   console.log 'loaded'
 
   this.getContent = (urlOrContent, options, element) ->
     if urlOrContent == undefined

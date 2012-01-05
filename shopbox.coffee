@@ -28,11 +28,22 @@ class ShopBox
   this.init = () ->
     if !$('.shopbox').length > 0
       $('body').prepend this.template
-      $('.shopbox-close-button').click (event) ->
-        event.preventDefault()
-        ShopBox.hide()
+      # close on X click
+      $('.shopbox-close-button').click ShopBox.closeBox
+      # close on escape
+      $('body').bind 'keydown', (event) ->
+        ShopBox.closeBox() if event.which == 27
+      # close on click elsewhere
+      $('.shopbox').bind 'click', (event) ->
+        if event.target == this
+          ShopBox.closeBox()
+
+  this.closeBox = (event) ->
+    event.preventDefault() if event
+    ShopBox.hide()
 
   this.hide = () ->
+    return unless $('.shopbox').hasClass('shopbox-visible')
     $('.shopbox').removeClass('shopbox-visible')
     $('.shopbox').transitionEnd ->
       $('.shopbox').hide();

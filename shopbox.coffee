@@ -12,11 +12,11 @@ class ShopBox
   this.template = '
     <div class="shopbox" style="display: none;">
       <div class="shopbox-main">
-	      <div class="shopbox-inner">
-      		<a class="shopbox-close-button" href="#">x</a>
-      		<div class="shopbox-content"></div>
-	      </div>
-	    </div>
+        <div class="shopbox-inner">
+          <a class="shopbox-close-button" href="#">x</a>
+          <div class="shopbox-content"></div>
+        </div>
+      </div>
     </div>
   '
   this.show = (content) ->
@@ -40,9 +40,16 @@ class ShopBox
   this.setContent = (content) ->
     contentbox = $('.shopbox .shopbox-content')
     contentbox.html(content)
-    # find all images, scripts, frames, iframes?
-    # result.load () ->
-    #   console.log 'loaded'
+    if content.match /^\<img /
+      this.setTypeStyle('image')
+    else if content.match /^\<iframe /
+      this.setTypeStyle('iframe')
+    else
+      this.setTypeStyle('content');
+    # spinner?
+
+  this.setTypeStyle = (style) ->
+    $('.shopbox').removeClass('content image iframe').addClass(style);
 
   this.getContent = (urlOrContent, options, element) ->
     if urlOrContent == undefined

@@ -15,7 +15,7 @@
 == Development Dependencies
 
   Coffeescript
-  Java
+  Java (for compiler/minifier)
   Rake
 
   If you change the source, run "rake compile" before checking in so that the minified js is up to date

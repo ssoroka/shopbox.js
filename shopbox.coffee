@@ -13,7 +13,7 @@ class ShopBox
     <div class="shopbox" style="display: none;">
       <div class="shopbox-main">
         <div class="shopbox-inner">
-          <a class="shopbox-close-button" href="#">x</a>
+          <a class="shopbox-close" href="#">Close</a>
           <div class="shopbox-content"></div>
         </div>
       </div>
@@ -29,7 +29,7 @@ class ShopBox
     if !$('.shopbox').length > 0
       $('body').prepend this.template
       # close on X click
-      $('.shopbox-close-button').click ShopBox.closeBox
+      $('.shopbox-close').click ShopBox.closeBox
       # close on escape
       $('body').bind 'keydown', (event) ->
         ShopBox.closeBox() if event.which == 27
@@ -82,6 +82,8 @@ class ShopBox
       return 'iframe'
     else
       return 'content'
+      
+window.ShopBox = ShopBox
 
 # extend jQuery    
 jQuery.fn.shopbox = (url, options = {}) ->

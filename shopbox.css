@@ -1,41 +1,40 @@
-div.shopbox {
-  -webkit-transition: all 0.15s ease-in-out;
- 	opacity: 0;
- 	background: rgba(0,0,0,0.7);
- 	position: absolute;
- 	top: 0; bottom: 0; left: 0; right: 0;
-}
+/* Transparent BG */
+.shopbox { -webkit-transition: all 0.15s ease-in-out; position: absolute; top: 0; bottom: 0; left: 0; right: 0; opacity: 0; background: rgba(0,0,0,0.7); }
+
+/* Main Modal Window */
 .shopbox-main {
 	-webkit-transition: all 0.20s ease-in-out;
-	transform: scale(0.5) ;
-	-webkit-transform: scale(0.5); /* Safari and Chrome */
-  border: 20px solid #FFF; margin: 0 auto; background: #FFF; vertical-align: center; width: 400px; height: 400px;
-  position: absolute; top: 50%; left: 50%; margin-left: -200px; margin-top: -200px;
-  box-shadow: 0px 1px 5px #000;
+	transform: scaleZ(0.5);
+	-webkit-transform: scale(0.5);
+	width: 400px; height: 400px; position: absolute; top: 50%; left: 50%; margin-left: -210px; margin-top: -210px;
+  border: 10px solid #FFF; 
+  background: #FFF;
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.25);
 }
+
+/* Content Wrapper */
 .shopbox-content * {
 	width: 400px; height: 400px;
 }
-.shopbox-close-button {
+
+/* Close Button */
+.shopbox-close {
   position: absolute;
+  width: 30px; height: 30px;
   top: -35px; right: -35px;
   border: 3px solid #FFF;
-  width: 30px;
-  height: 30px;
-  background: #000;
   border-radius: 30px;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #FFF; text-decoration: none;
-  text-align: center; line-height: 30px;
-  box-shadow: 0px 1px 3px #000;
+  background: #000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAh0lEQVR42u3VSwrAIAwE0F6l4KkC3Qq5/7bBCjXdjOkqEkojzGrAhz/cWmshSTjhhMPg8tatgmvP2UOTjkZX/WBFdSiOqI7qBe/PxIiT0RWXFRuA3AGUnM8YcQv1gRGXCSqKhsKhW/3py1WMJ3OMLH1ODKh2iLP3GTOgiHPIJ5H/ccIJ/wu+ALcP4jo2BwVXAAAAAElFTkSuQmCC) no-repeat;
+	text-indent: -30000px;
 }
-.shopbox.shopbox-visible {
-  opacity: 1;
-}
-.shopbox-inner {
-	position: relative;
-}
+
+.shopbox-inner { position: relative; }
+
+/* Transparent BG - Animation End */
+.shopbox.shopbox-visible { opacity: 1; }
+
+/* Main Modal Window - Animation End */
 .shopbox.shopbox-visible .shopbox-main {
-	transform: scale(1);
-	-webkit-transform: scale(1); /* Safari and Chrome */
+	transform: scaleZ(0.5);
+	-webkit-transform: scaleZ(0.5);
 }

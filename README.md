@@ -28,5 +28,5 @@
 
 ## Authors
 
-  Christoper Lobay
-  Steven Soroka
+* Christoper Lobay
+* Steven Soroka

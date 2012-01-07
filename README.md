@@ -4,6 +4,8 @@
 * Can display iframes, html, images.
 * Doesn't do image galleries or captions, though it should be easy to extend if you really really want that.
 
+  See the shopbox_example.html
+
 ## Runtime Dependencies
 
 * jQuery
@@ -25,6 +27,16 @@
 * Needs to know height/width of images.
 * Default styles.
 * Loading spinner.
+
+## Issues
+
+* large screen size is a performance issue with css animation
+* markup needs to be cleaned up
+* default styles
+* style example page to be nice
+* add tutorial in readme
+* batman integration?
+* verify cross-browser
 
 ## Authors
 

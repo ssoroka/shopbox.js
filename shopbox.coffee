@@ -11,6 +11,7 @@ class ShopBox
 
   this.template = '
     <div class="shopbox shopbox-hidden">
+      <div class="shopbox-spinner"></div>
       <div class="shopbox-main">
         <div class="shopbox-inner">
           <a class="shopbox-close" href="#">Close</a>
@@ -19,11 +20,13 @@ class ShopBox
       </div>
     </div>
   '
+
   this.show = (content) ->
     $('.shopbox').removeClass('shopbox-hidden')
     setTimeout (->
       $(".shopbox").addClass "shopbox-visible"
-    ), 0     
+      ShopBox.startSpinner()
+    ), 0
 
   this.init = () ->
     if !$('.shopbox').length > 0
@@ -49,18 +52,35 @@ class ShopBox
       $('.shopbox').addClass('shopbox-hidden');
   
   this.setContent = (content) ->
+    console.log 'setContent'
+    ShopBox.show()
     contentbox = $('.shopbox .shopbox-content')
-    contentbox.html(content)
+    hiddenbox = $(content)
+    # hiddenbox.html content
+    # hiddenbox.load this.finishSpinner content
+    hiddenbox.load this.finishSpinner hiddenbox
+
     if content.match /^\<img /
-      this.setTypeStyle('image')
+      this.setTypeStyle('shopbox-image')
     else if content.match /^\<iframe /
-      this.setTypeStyle('iframe')
+      this.setTypeStyle('shopbox-iframe')
     else
-      this.setTypeStyle('content');
-    # spinner?
+      this.setTypeStyle('shopbox-content')
+
+  this.startSpinner = () ->
+    spinner = $('.shopbox-spinner')
+    return if spinner.hasClass('shopbox-visible')
+    spinner.addClass 'shopbox-visible'
+
+  this.finishSpinner = (content) ->
+    spinner = $('.shopbox-spinner')
+    return unless spinner.hasClass('shopbox-visible')
+    spinner.removeClass 'shopbox-visible'
+    $('.shopbox .shopbox-content').html content
+
 
   this.setTypeStyle = (style) ->
-    $('.shopbox').removeClass('content image iframe').addClass(style);
+    $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);
 
   this.getContent = (urlOrContent, options, element) ->
     if urlOrContent == undefined
@@ -92,7 +112,6 @@ jQuery.fn.shopbox = (url, options = {}) ->
   element.click (event) -> 
     event.preventDefault()
     ShopBox.setContent ShopBox.getContent(url, options, element)
-    ShopBox.show()
 
 jQuery.fn.transitionEnd = (func) ->
   this.one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func

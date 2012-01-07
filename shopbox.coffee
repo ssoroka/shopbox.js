@@ -10,7 +10,7 @@ class ShopBox
   this.box = null
 
   this.template = '
-    <div class="shopbox" style="display: none;">
+    <div class="shopbox shopbox-hidden">
       <div class="shopbox-main">
         <div class="shopbox-inner">
           <a class="shopbox-close" href="#">Close</a>
@@ -20,7 +20,7 @@ class ShopBox
     </div>
   '
   this.show = (content) ->
-    $('.shopbox').show()
+    $('.shopbox').removeClass('shopbox-hidden')
     setTimeout (->
       $(".shopbox").addClass "shopbox-visible"
     ), 0     
@@ -46,7 +46,7 @@ class ShopBox
     return unless $('.shopbox').hasClass('shopbox-visible')
     $('.shopbox').removeClass('shopbox-visible')
     $('.shopbox').transitionEnd ->
-      $('.shopbox').hide();
+      $('.shopbox').addClass('shopbox-hidden');
   
   this.setContent = (content) ->
     contentbox = $('.shopbox .shopbox-content')

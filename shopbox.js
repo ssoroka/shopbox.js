@@ -14,13 +14,6 @@
       </div>\
     </div>\
   ';
-    ShopBox.show = function(content) {
-      $('.shopbox').removeClass('shopbox-hidden');
-      return setTimeout((function() {
-        $(".shopbox").addClass("shopbox-visible");
-        return ShopBox.startSpinner();
-      }), 0);
-    };
     ShopBox.init = function() {
       if (!$('.shopbox').length > 0) {
         $('body').prepend(this.template);
@@ -37,10 +30,19 @@
         });
       }
     };
+    ShopBox.show = function(content) {
+      console.log('show');
+      $('.shopbox').removeClass('shopbox-hidden');
+      return setTimeout((function() {
+        console.log('show setTimeout');
+        return $(".shopbox").addClass("shopbox-visible");
+      }), 0);
+    };
     ShopBox.closeBox = function(event) {
       if (event) {
         event.preventDefault();
       }
+      $('.shopbox .shopbox-content').html('');
       return ShopBox.hide();
     };
     ShopBox.hide = function() {
@@ -49,38 +51,23 @@
       }
       $('.shopbox').removeClass('shopbox-visible');
       return $('.shopbox').transitionEnd(function() {
-        return $('.shopbox').addClass('shopbox-hidden');
+        $('.shopbox').addClass('shopbox-hidden');
+        return $('.shopbox-main').removeClass('shopbox-visible');
       });
     };
-    ShopBox.setContent = function(content) {
-      var contentbox, hiddenbox;
-      console.log('setContent');
-      ShopBox.show();
-      contentbox = $('.shopbox .shopbox-content');
-      hiddenbox = $(content);
-      setTimeout((function() {
-        return hiddenbox.load(ShopBox.finishSpinner(hiddenbox));
-      }), 0);
-      if (content.match(/^\<img /)) {
-        return this.setTypeStyle('shopbox-image');
-      } else if (content.match(/^\<iframe /)) {
-        return this.setTypeStyle('shopbox-iframe');
-      } else {
-        return this.setTypeStyle('shopbox-content');
-      }
-    };
     ShopBox.startSpinner = function() {
-      var spinner;
-      spinner = $('.shopbox-spinner');
-      if (!spinner.hasClass('shopbox-visible')) {
-        return spinner.addClass('shopbox-visible');
-      }
+      console.log('startSpinner');
+      $('.shopbox-spinner').addClass('shopbox-visible');
+      return $('.shopbox-main').removeClass('shopbox-visible');
     };
-    ShopBox.finishSpinner = function(content) {
-      var spinner;
+    ShopBox.finishSpinner = function(event) {
+      var content, spinner;
+      console.log('finishSpinner');
+      content = event.target;
       spinner = $('.shopbox-spinner');
       if (spinner.hasClass('shopbox-visible')) {
         spinner.removeClass('shopbox-visible');
+        $('.shopbox-main').addClass('shopbox-visible');
         console.log('Setting content to:');
         console.log(content);
         $('.shopbox .shopbox-content').html(content);
@@ -90,17 +77,35 @@
     ShopBox.setTypeStyle = function(style) {
       return $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);
     };
-    ShopBox.getContent = function(urlOrContent, options, element) {
+    ShopBox.loadFromUrl = function(urlOrContent, options, element) {
+      var iframe, img, type, url;
       if (urlOrContent === void 0) {
         urlOrContent = element.attr('href');
       }
-      switch (options['type'] || this.typeFromUrl(urlOrContent)) {
+      type = options['type'] || this.typeFromUrl(urlOrContent);
+      ShopBox.show();
+      if (type !== 'content') {
+        url = "" + urlOrContent + "?" + (Math.random() * 1000000000000000000);
+        ShopBox.startSpinner();
+      }
+      this.setTypeStyle("shopbox-" + type);
+      switch (type) {
         case 'image':
-          return "<img src=\"" + urlOrContent + "\" />";
+          img = $('<img />');
+          img.load(ShopBox.finishSpinner);
+          img.attr('src', url);
+          return window.img = img;
         case 'iframe':
-          return "<iframe src=\"" + urlOrContent + "\"></iframe>";
+          iframe = $('<iframe ></iframe>');
+          iframe.hide();
+          iframe.load(function(event) {
+            iframe.show();
+            return ShopBox.finishSpinner(event);
+          });
+          iframe.attr('src', url);
+          return $('.shopbox .shopbox-content').append(iframe);
         default:
-          return urlOrContent;
+          return $('.shopbox .shopbox-content').html(urlOrContent);
       }
     };
     ShopBox.typeFromUrl = function(url) {
@@ -127,7 +132,7 @@
     ShopBox.init();
     return element.click(function(event) {
       event.preventDefault();
-      return ShopBox.setContent(ShopBox.getContent(url, options, element));
+      return ShopBox.loadFromUrl(url, options, element);
     });
   };
   jQuery.fn.transitionEnd = function(func) {

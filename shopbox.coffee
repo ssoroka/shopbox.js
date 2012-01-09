@@ -7,9 +7,9 @@
 #
 # shopbox class
 class ShopBox
-  this.box = null
+  @box = null
 
-  this.template = '
+  @template = '
     <div class="shopbox shopbox-hidden">
       <div class="shopbox-spinner"></div>
       <div class="shopbox-main">
@@ -21,16 +21,9 @@ class ShopBox
     </div>
   '
 
-  this.show = (content) ->
-    $('.shopbox').removeClass('shopbox-hidden')
-    setTimeout (->
-      $(".shopbox").addClass "shopbox-visible"
-      ShopBox.startSpinner()
-    ), 0
-
-  this.init = () ->
+  @init = () ->
     if !$('.shopbox').length > 0
-      $('body').prepend this.template
+      $('body').prepend @template
       # close on X click
       $('.shopbox-close').click ShopBox.closeBox
       # close on escape
@@ -41,62 +34,77 @@ class ShopBox
         if event.target == this
           ShopBox.closeBox()
 
-  this.closeBox = (event) ->
+  @show = (content) ->
+    console.log 'show'
+    $('.shopbox').removeClass('shopbox-hidden')
+    setTimeout (->
+      console.log 'show setTimeout'
+      $(".shopbox").addClass "shopbox-visible"
+    ), 0
+
+  @closeBox = (event) ->
     event.preventDefault() if event
+    $('.shopbox .shopbox-content').html('')
     ShopBox.hide()
 
-  this.hide = () ->
+  @hide = () ->
     return unless $('.shopbox').hasClass('shopbox-visible')
     $('.shopbox').removeClass('shopbox-visible')
     $('.shopbox').transitionEnd ->
       $('.shopbox').addClass('shopbox-hidden');
+      $('.shopbox-main').removeClass('shopbox-visible');
   
-  this.setContent = (content) ->
-    console.log 'setContent'
-    ShopBox.show()
-    contentbox = $('.shopbox .shopbox-content')
-    hiddenbox = $(content)
-    # hiddenbox.html content
-    # hiddenbox.load this.finishSpinner content
-    setTimeout (->
-      hiddenbox.load ShopBox.finishSpinner hiddenbox
-    ), 0
+  @startSpinner = () ->
+    console.log 'startSpinner'
+    $('.shopbox-spinner').addClass 'shopbox-visible'
+    $('.shopbox-main').removeClass 'shopbox-visible'
 
-
-    if content.match /^\<img /
-      this.setTypeStyle('shopbox-image')
-    else if content.match /^\<iframe /
-      this.setTypeStyle('shopbox-iframe')
-    else
-      this.setTypeStyle('shopbox-content')
-
-  this.startSpinner = () ->
-    spinner = $('.shopbox-spinner')
-    if !spinner.hasClass('shopbox-visible')
-      spinner.addClass 'shopbox-visible'
-
-  this.finishSpinner = (content) ->
+  @finishSpinner = (event) ->
+    console.log 'finishSpinner'
+    content = event.target
     spinner = $('.shopbox-spinner')
     if spinner.hasClass('shopbox-visible')
       spinner.removeClass 'shopbox-visible'
+      $('.shopbox-main').addClass 'shopbox-visible'
+      console.log 'Setting content to:'
+      console.log content
       $('.shopbox .shopbox-content').html content
       $('.shopbox').addClass 'shopbox-loaded'
 
-  this.setTypeStyle = (style) ->
+  @setTypeStyle = (style) ->
     $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);
 
-  this.getContent = (urlOrContent, options, element) ->
+  @loadFromUrl = (urlOrContent, options, element) ->
     if urlOrContent == undefined
       urlOrContent = element.attr 'href'
-    switch options['type'] || this.typeFromUrl(urlOrContent)
+    type = options['type'] || @typeFromUrl(urlOrContent)
+    ShopBox.show()
+
+    if type != 'content'
+      url = "#{urlOrContent}?#{Math.random() * 1000000000000000000}"
+      ShopBox.startSpinner()
+
+    @setTypeStyle("shopbox-#{type}")
+    switch type
       when 'image'
-        return "<img src=\"#{urlOrContent}\" />"
+        img = $('<img />')
+        img.load ShopBox.finishSpinner
+        img.attr 'src', url
+        window.img = img
       when 'iframe'
-        return "<iframe src=\"#{urlOrContent}\"></iframe>"
+        iframe = $('<iframe ></iframe>')
+        iframe.hide()
+        iframe.load (event) ->
+          iframe.show()
+          ShopBox.finishSpinner(event)
+        iframe.attr 'src', url
+        $('.shopbox .shopbox-content').append(iframe)
+      # when 'video'
       else
-        return urlOrContent
+        $('.shopbox .shopbox-content').html(urlOrContent)
+
     
-  this.typeFromUrl = (url) ->
+  @typeFromUrl = (url) ->
     image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
     ext = url.split('.').pop().toLowerCase()
     if image_exts.indexOf(ext) >= 0
@@ -114,7 +122,7 @@ jQuery.fn.shopbox = (url, options = {}) ->
   ShopBox.init()
   element.click (event) -> 
     event.preventDefault()
-    ShopBox.setContent ShopBox.getContent(url, options, element)
+    ShopBox.loadFromUrl(url, options, element)
 
 jQuery.fn.transitionEnd = (func) ->
-  this.one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func
+  @one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func

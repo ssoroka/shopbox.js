@@ -35,10 +35,8 @@ class ShopBox
           ShopBox.closeBox()
 
   @show = (content) ->
-    console.log 'show'
     $('.shopbox').removeClass('shopbox-hidden')
     setTimeout (->
-      console.log 'show setTimeout'
       $(".shopbox").addClass "shopbox-visible"
     ), 0
 
@@ -56,19 +54,15 @@ class ShopBox
       $('.shopbox').removeClass 'shopbox-loaded'
   
   @startSpinner = () ->
-    console.log 'startSpinner'
     $('.shopbox-spinner').addClass 'shopbox-visible'
     $('.shopbox-main').removeClass 'shopbox-visible'
 
   @finishSpinner = (event) ->
-    console.log 'finishSpinner'
     content = event.target
     spinner = $('.shopbox-spinner')
     if spinner.hasClass('shopbox-visible')
       spinner.removeClass 'shopbox-visible'
       $('.shopbox-main').addClass 'shopbox-visible'
-      console.log 'Setting content to:'
-      console.log content
       $('.shopbox .shopbox-content').html content
       $('.shopbox').addClass 'shopbox-loaded'
 

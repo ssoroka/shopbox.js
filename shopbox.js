@@ -31,10 +31,8 @@
       }
     };
     ShopBox.show = function(content) {
-      console.log('show');
       $('.shopbox').removeClass('shopbox-hidden');
       return setTimeout((function() {
-        console.log('show setTimeout');
         return $(".shopbox").addClass("shopbox-visible");
       }), 0);
     };
@@ -57,20 +55,16 @@
       });
     };
     ShopBox.startSpinner = function() {
-      console.log('startSpinner');
       $('.shopbox-spinner').addClass('shopbox-visible');
       return $('.shopbox-main').removeClass('shopbox-visible');
     };
     ShopBox.finishSpinner = function(event) {
       var content, spinner;
-      console.log('finishSpinner');
       content = event.target;
       spinner = $('.shopbox-spinner');
       if (spinner.hasClass('shopbox-visible')) {
         spinner.removeClass('shopbox-visible');
         $('.shopbox-main').addClass('shopbox-visible');
-        console.log('Setting content to:');
-        console.log(content);
         $('.shopbox .shopbox-content').html(content);
         return $('.shopbox').addClass('shopbox-loaded');
       }

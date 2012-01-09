@@ -52,7 +52,8 @@
       $('.shopbox').removeClass('shopbox-visible');
       return $('.shopbox').transitionEnd(function() {
         $('.shopbox').addClass('shopbox-hidden');
-        return $('.shopbox-main').removeClass('shopbox-visible');
+        $('.shopbox-main').removeClass('shopbox-visible');
+        return $('.shopbox').removeClass('shopbox-loaded');
       });
     };
     ShopBox.startSpinner = function() {

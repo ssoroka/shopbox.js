@@ -53,6 +53,7 @@ class ShopBox
     $('.shopbox').transitionEnd ->
       $('.shopbox').addClass('shopbox-hidden');
       $('.shopbox-main').removeClass('shopbox-visible');
+      $('.shopbox').removeClass 'shopbox-loaded'
   
   @startSpinner = () ->
     console.log 'startSpinner'

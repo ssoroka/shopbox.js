@@ -58,7 +58,10 @@ class ShopBox
     hiddenbox = $(content)
     # hiddenbox.html content
     # hiddenbox.load this.finishSpinner content
-    hiddenbox.load this.finishSpinner hiddenbox
+    setTimeout (->
+      hiddenbox.load ShopBox.finishSpinner hiddenbox
+    ), 0
+
 
     if content.match /^\<img /
       this.setTypeStyle('shopbox-image')
@@ -69,15 +72,15 @@ class ShopBox
 
   this.startSpinner = () ->
     spinner = $('.shopbox-spinner')
-    return if spinner.hasClass('shopbox-visible')
-    spinner.addClass 'shopbox-visible'
+    if !spinner.hasClass('shopbox-visible')
+      spinner.addClass 'shopbox-visible'
 
   this.finishSpinner = (content) ->
     spinner = $('.shopbox-spinner')
-    return unless spinner.hasClass('shopbox-visible')
-    spinner.removeClass 'shopbox-visible'
-    $('.shopbox .shopbox-content').html content
-
+    if spinner.hasClass('shopbox-visible')
+      spinner.removeClass 'shopbox-visible'
+      $('.shopbox .shopbox-content').html content
+      $('.shopbox').addClass 'shopbox-loaded'
 
   this.setTypeStyle = (style) ->
     $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);

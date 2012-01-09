@@ -34,6 +34,7 @@
 .shopbox-spinner  {
 	-webkit-transition: opacity 0.5s ease-in-out;
 	opacity: 0;
+  background-color: red;
 	-webkit-animation-name:             rotate; 
   -webkit-animation-duration:         0.25s; 
   -webkit-animation-iteration-count:  infinite;

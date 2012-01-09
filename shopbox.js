@@ -58,7 +58,9 @@
       ShopBox.show();
       contentbox = $('.shopbox .shopbox-content');
       hiddenbox = $(content);
-      hiddenbox.load(this.finishSpinner(hiddenbox));
+      setTimeout((function() {
+        return hiddenbox.load(ShopBox.finishSpinner(hiddenbox));
+      }), 0);
       if (content.match(/^\<img /)) {
         return this.setTypeStyle('shopbox-image');
       } else if (content.match(/^\<iframe /)) {
@@ -70,19 +72,20 @@
     ShopBox.startSpinner = function() {
       var spinner;
       spinner = $('.shopbox-spinner');
-      if (spinner.hasClass('shopbox-visible')) {
-        return;
+      if (!spinner.hasClass('shopbox-visible')) {
+        return spinner.addClass('shopbox-visible');
       }
-      return spinner.addClass('shopbox-visible');
     };
     ShopBox.finishSpinner = function(content) {
       var spinner;
       spinner = $('.shopbox-spinner');
-      if (!spinner.hasClass('shopbox-visible')) {
-        return;
+      if (spinner.hasClass('shopbox-visible')) {
+        spinner.removeClass('shopbox-visible');
+        console.log('Setting content to:');
+        console.log(content);
+        $('.shopbox .shopbox-content').html(content);
+        return $('.shopbox').addClass('shopbox-loaded');
       }
-      spinner.removeClass('shopbox-visible');
-      return $('.shopbox .shopbox-content').html(content);
     };
     ShopBox.setTypeStyle = function(style) {
       return $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);

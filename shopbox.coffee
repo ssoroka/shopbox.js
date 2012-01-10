@@ -22,7 +22,7 @@ class ShopBox
   '
 
   @init = () ->
-    if !$('.shopbox').length > 0
+    if $('.shopbox').length == 0
       $('body').prepend @template
       # close on X click
       $('.shopbox-close').click ShopBox.closeBox
@@ -136,11 +136,12 @@ window.ShopBox = ShopBox
 
 # extend jQuery    
 jQuery.fn.shopbox = (url, options = {}) ->
-  element = this
+  elements = this
   ShopBox.init()
-  element.click (event) -> 
-    event.preventDefault()
-    ShopBox.loadFromUrl(url, options, element)
+  elements.each (i, element) ->
+    $(element).click (event) -> 
+      event.preventDefault()
+      ShopBox.loadFromUrl(url, options, $(element))
 
 jQuery.fn.transitionEnd = (func) ->
   @one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func

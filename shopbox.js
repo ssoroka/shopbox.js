@@ -15,7 +15,7 @@
     </div>\
   ';
     ShopBox.init = function() {
-      if (!$('.shopbox').length > 0) {
+      if ($('.shopbox').length === 0) {
         $('body').prepend(this.template);
         $('.shopbox-close').click(ShopBox.closeBox);
         $(window).bind('keydown', function(event) {
@@ -169,15 +169,17 @@
   })();
   window.ShopBox = ShopBox;
   jQuery.fn.shopbox = function(url, options) {
-    var element;
+    var elements;
     if (options == null) {
       options = {};
     }
-    element = this;
+    elements = this;
     ShopBox.init();
-    return element.click(function(event) {
-      event.preventDefault();
-      return ShopBox.loadFromUrl(url, options, element);
+    return elements.each(function(i, element) {
+      return $(element).click(function(event) {
+        event.preventDefault();
+        return ShopBox.loadFromUrl(url, options, $(element));
+      });
     });
   };
   jQuery.fn.transitionEnd = function(func) {

@@ -23,7 +23,7 @@
             return ShopBox.closeBox();
           }
         });
-        return $('.shopbox').bind('click', function(event) {
+        return $('.shopbox, .shopbox-spinner').bind('click', function(event) {
           if (event.target === this) {
             return ShopBox.closeBox();
           }
@@ -40,7 +40,6 @@
       if (event) {
         event.preventDefault();
       }
-      $('.shopbox .shopbox-content').html('');
       return ShopBox.hide();
     };
     ShopBox.hide = function() {
@@ -60,20 +59,20 @@
     };
     ShopBox.finishSpinner = function(event) {
       var content, spinner;
-      content = event.target;
+      content = event.target || event;
       spinner = $('.shopbox-spinner');
       if (spinner.hasClass('shopbox-visible')) {
         spinner.removeClass('shopbox-visible');
-        $('.shopbox-main').addClass('shopbox-visible');
-        $('.shopbox .shopbox-content').html(content);
-        return $('.shopbox').addClass('shopbox-loaded');
       }
+      $('.shopbox-main').addClass('shopbox-visible');
+      $('.shopbox .shopbox-content').html(content);
+      return $('.shopbox').addClass('shopbox-loaded');
     };
     ShopBox.setTypeStyle = function(style) {
-      return $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);
+      return $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
     };
     ShopBox.loadFromUrl = function(urlOrContent, options, element) {
-      var iframe, img, type, url;
+      var dimensions, iframe, img, type, url;
       if (urlOrContent === void 0) {
         urlOrContent = element.attr('href');
       }
@@ -87,12 +86,24 @@
       switch (type) {
         case 'image':
           img = $('<img />');
-          img.load(ShopBox.finishSpinner);
+          img.load(function(event) {
+            ShopBox.setSize({
+              height: options.height || this.height,
+              width: options.width || this.width
+            });
+            return ShopBox.finishSpinner(event);
+          });
           img.attr('src', url);
           return window.img = img;
         case 'iframe':
-          iframe = $('<iframe ></iframe>');
+          iframe = $('<iframe></iframe>');
           iframe.hide();
+          dimensions = {
+            height: options.height || 400,
+            width: options.width || 600
+          };
+          iframe.css(dimensions);
+          ShopBox.setSize(dimensions);
           iframe.load(function(event) {
             iframe.show();
             return ShopBox.finishSpinner(event);
@@ -100,8 +111,30 @@
           iframe.attr('src', url);
           return $('.shopbox .shopbox-content').append(iframe);
         default:
-          return $('.shopbox .shopbox-content').html(urlOrContent);
+          ShopBox.setSize(options);
+          return ShopBox.finishSpinner(urlOrContent);
       }
+    };
+    ShopBox.setSize = function(dimensions) {
+      var content, max_height, max_width;
+      max_width = document.width - 50;
+      max_height = document.height - 50;
+      if (max_width < dimensions.width) {
+        dimensions.width = max_width;
+      }
+      if (max_height < dimensions.height) {
+        dimensions.height = max_height;
+      }
+      dimensions.height || (dimensions.height = '');
+      dimensions.width || (dimensions.width = '');
+      content = $('.shopbox-content');
+      content.css(dimensions);
+      return setTimeout((function() {
+        return $('.shopbox-main').css({
+          'margin-left': -content.width() / 2 - 10,
+          'margin-top': -content.height() / 2 - 10
+        });
+      }), 0);
     };
     ShopBox.typeFromUrl = function(url) {
       var ext, image_exts;
@@ -112,7 +145,7 @@
       } else if (url.match(/^https?\:\/\/\S+$/)) {
         return 'iframe';
       } else {
-        return 'content';
+        return 'html';
       }
     };
     return ShopBox;

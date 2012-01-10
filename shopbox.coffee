@@ -57,16 +57,16 @@ class ShopBox
     $('.shopbox-main').removeClass 'shopbox-visible'
 
   @finishSpinner = (event) ->
-    content = event.target
+    content = event.target || event
     spinner = $('.shopbox-spinner')
     if spinner.hasClass('shopbox-visible')
       spinner.removeClass 'shopbox-visible'
-      $('.shopbox-main').addClass 'shopbox-visible'
-      $('.shopbox .shopbox-content').html content
-      $('.shopbox').addClass 'shopbox-loaded'
+    $('.shopbox-main').addClass 'shopbox-visible'
+    $('.shopbox .shopbox-content').html content
+    $('.shopbox').addClass 'shopbox-loaded'
 
   @setTypeStyle = (style) ->
-    $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe').addClass(style);
+    $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
 
   @loadFromUrl = (urlOrContent, options, element) ->
     if urlOrContent == undefined
@@ -82,12 +82,17 @@ class ShopBox
     switch type
       when 'image'
         img = $('<img />')
-        img.load ShopBox.finishSpinner
+        img.load (event) ->
+          ShopBox.setSize({height: options.height || @height, width: options.width || @width})
+          ShopBox.finishSpinner event
         img.attr 'src', url
         window.img = img
       when 'iframe'
-        iframe = $('<iframe ></iframe>')
+        iframe = $('<iframe></iframe>')
         iframe.hide()
+        dimensions = {height: options.height || 400, width: options.width || 600}
+        iframe.css(dimensions)
+        ShopBox.setSize(dimensions)
         iframe.load (event) ->
           iframe.show()
           ShopBox.finishSpinner(event)
@@ -95,9 +100,24 @@ class ShopBox
         $('.shopbox .shopbox-content').append(iframe)
       # when 'video'
       else
-        $('.shopbox .shopbox-content').html(urlOrContent)
+        ShopBox.setSize(options)
+        ShopBox.finishSpinner(urlOrContent)
 
-    
+
+  @setSize = (dimensions) ->
+    max_width = document.width - 50
+    max_height = document.height - 50
+    dimensions.width = max_width if max_width < dimensions.width
+    dimensions.height = max_height if max_height < dimensions.height
+
+    dimensions.height ||= ''
+    dimensions.width ||= ''
+    content = $('.shopbox-content')
+    content.css dimensions
+    setTimeout (->
+      $('.shopbox-main').css({'margin-left': -content.width() / 2 - 10, 'margin-top': -content.height() / 2 - 10})
+    ), 0
+      
   @typeFromUrl = (url) ->
     image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
     ext = url.split('.').pop().toLowerCase()

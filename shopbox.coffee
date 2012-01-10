@@ -27,7 +27,7 @@ class ShopBox
       # close on X click
       $('.shopbox-close').click ShopBox.closeBox
       # close on escape
-      $('body').bind 'keydown', (event) ->
+      $(window).bind 'keydown', (event) ->
         ShopBox.closeBox() if event.which == 27
       # close on click elsewhere
       $('.shopbox, .shopbox-spinner').bind 'click', (event) ->
@@ -72,6 +72,8 @@ class ShopBox
     if urlOrContent == undefined
       urlOrContent = element.attr 'href'
     type = options['type'] || @typeFromUrl(urlOrContent)
+    $('.shopbox-content').css({width: '', height: ''})
+    $('.shopbox-main').css({'margin-left': '', 'margin-top': ''})
     ShopBox.show()
 
     if type != 'content'
@@ -97,12 +99,18 @@ class ShopBox
           iframe.show()
           ShopBox.finishSpinner(event)
         iframe.attr 'src', url
-        $('.shopbox .shopbox-content').append(iframe)
+        $('.shopbox .shopbox-content').html iframe
       # when 'video'
       else
-        ShopBox.setSize(options)
-        ShopBox.finishSpinner(urlOrContent)
-
+        div = $('<div />').css({display:'none'})
+        $('.shopbox .shopbox-content').html(div)
+        div.ready () ->
+          setTimeout (->
+            $('.shopbox-main').css({'margin-left': -div.width() / 2 - 10, 'margin-top': -div.height() / 2 - 10})
+            div.remove()
+            ShopBox.finishSpinner(urlOrContent)
+          ), 0
+        div.html(urlOrContent)
 
   @setSize = (dimensions) ->
     max_width = document.width - 50
@@ -110,13 +118,9 @@ class ShopBox
     dimensions.width = max_width if max_width < dimensions.width
     dimensions.height = max_height if max_height < dimensions.height
 
-    dimensions.height ||= ''
-    dimensions.width ||= ''
     content = $('.shopbox-content')
     content.css dimensions
-    setTimeout (->
-      $('.shopbox-main').css({'margin-left': -content.width() / 2 - 10, 'margin-top': -content.height() / 2 - 10})
-    ), 0
+    $('.shopbox-main').css({'margin-left': -dimensions.width / 2 - 10, 'margin-top': -dimensions.height / 2 - 10})
       
   @typeFromUrl = (url) ->
     image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']

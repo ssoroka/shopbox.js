@@ -18,7 +18,7 @@
       if (!$('.shopbox').length > 0) {
         $('body').prepend(this.template);
         $('.shopbox-close').click(ShopBox.closeBox);
-        $('body').bind('keydown', function(event) {
+        $(window).bind('keydown', function(event) {
           if (event.which === 27) {
             return ShopBox.closeBox();
           }
@@ -72,11 +72,19 @@
       return $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
     };
     ShopBox.loadFromUrl = function(urlOrContent, options, element) {
-      var dimensions, iframe, img, type, url;
+      var dimensions, div, iframe, img, type, url;
       if (urlOrContent === void 0) {
         urlOrContent = element.attr('href');
       }
       type = options['type'] || this.typeFromUrl(urlOrContent);
+      $('.shopbox-content').css({
+        width: '',
+        height: ''
+      });
+      $('.shopbox-main').css({
+        'margin-left': '',
+        'margin-top': ''
+      });
       ShopBox.show();
       if (type !== 'content') {
         url = "" + urlOrContent + "?" + (Math.random() * 1000000000000000000);
@@ -109,10 +117,23 @@
             return ShopBox.finishSpinner(event);
           });
           iframe.attr('src', url);
-          return $('.shopbox .shopbox-content').append(iframe);
+          return $('.shopbox .shopbox-content').html(iframe);
         default:
-          ShopBox.setSize(options);
-          return ShopBox.finishSpinner(urlOrContent);
+          div = $('<div />').css({
+            display: 'none'
+          });
+          $('.shopbox .shopbox-content').html(div);
+          div.ready(function() {
+            return setTimeout((function() {
+              $('.shopbox-main').css({
+                'margin-left': -div.width() / 2 - 10,
+                'margin-top': -div.height() / 2 - 10
+              });
+              div.remove();
+              return ShopBox.finishSpinner(urlOrContent);
+            }), 0);
+          });
+          return div.html(urlOrContent);
       }
     };
     ShopBox.setSize = function(dimensions) {
@@ -125,16 +146,12 @@
       if (max_height < dimensions.height) {
         dimensions.height = max_height;
       }
-      dimensions.height || (dimensions.height = '');
-      dimensions.width || (dimensions.width = '');
       content = $('.shopbox-content');
       content.css(dimensions);
-      return setTimeout((function() {
-        return $('.shopbox-main').css({
-          'margin-left': -content.width() / 2 - 10,
-          'margin-top': -content.height() / 2 - 10
-        });
-      }), 0);
+      return $('.shopbox-main').css({
+        'margin-left': -dimensions.width / 2 - 10,
+        'margin-top': -dimensions.height / 2 - 10
+      });
     };
     ShopBox.typeFromUrl = function(url) {
       var ext, image_exts;

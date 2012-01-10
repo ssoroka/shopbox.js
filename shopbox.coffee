@@ -30,7 +30,7 @@ class ShopBox
       $('body').bind 'keydown', (event) ->
         ShopBox.closeBox() if event.which == 27
       # close on click elsewhere
-      $('.shopbox').bind 'click', (event) ->
+      $('.shopbox, .shopbox-spinner').bind 'click', (event) ->
         if event.target == this
           ShopBox.closeBox()
 
@@ -42,7 +42,6 @@ class ShopBox
 
   @closeBox = (event) ->
     event.preventDefault() if event
-    $('.shopbox .shopbox-content').html('')
     ShopBox.hide()
 
   @hide = () ->
@@ -67,7 +66,7 @@ class ShopBox
       $('.shopbox').addClass 'shopbox-loaded'
 
   @setTypeStyle = (style) ->
-    $('.shopbox').removeClass('shopbox-content shopbox-image shopbox-iframe').addClass(style);
+    $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe').addClass(style);
 
   @loadFromUrl = (urlOrContent, options, element) ->
     if urlOrContent == undefined
@@ -107,7 +106,7 @@ class ShopBox
     else if url.match(/^https?\:\/\/\S+$/) 
       return 'iframe'
     else
-      return 'content'
+      return 'html'
       
 window.ShopBox = ShopBox
 

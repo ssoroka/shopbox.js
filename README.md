@@ -1,12 +1,36 @@
 # Shopbox.js
 
 * A simple extensible lightbox that separates animation and presentation completely from Javascript. Animation and styling is all CSS3, no crappy images, no crappy JS animations.
-* Can display iframes, html, images
-* auto adjusts shopbox size to fit image
+* Can display iframes, html, images, and video
+* auto adjusts shopbox size to fit image size
 * shows spinner while waiting for large images or iframes to load
 * Doesn't do image galleries or captions, though it should be easy to extend if you really really want that.
 
-  See the shopbox_example.html
+## Usage examples
+
+Attach shopbox to all elements with class "shopbox":
+
+    $('.shopbox').shopbox();
+
+Attach shopbox to a specific id, and load an image when it's clicked:
+
+    $('#image_link').shopbox('http://cvcl.mit.edu/hybrid/cat2.jpg');
+
+Attach shopbox to a specific id and load custom html when it's clicked:
+
+    $('#content_link').shopbox('<h1>Serious cat is not amused.</h1> <img src="http://cvcl.mit.edu/hybrid/cat2.jpg">');
+
+Attach shopbox to a specific id and load a url in an iframe when it's clicked in a 800x600 shopbox window:
+
+    $('#iframe_link').shopbox('http://shop.shopyasukoazuma.com/', {width: 800, height: 600});
+
+Alternatively, you can pass the width and height using data attributes, and the target url using href:
+
+    <a href="http://shop.shopyasukoazuma.com/" id="iframe_link" data-shopbox-width='800' data-shopbox-height='600'>iframe link</a>
+
+This works for images, too; the image to be shown is taken from the "src" attribute.
+
+shopbox_example.html uses some of these examples
 
 ## Runtime Dependencies
 
@@ -33,6 +57,8 @@
 * add tutorial in readme
 * batman integration?
 * verify cross-browser
+* resize shopbox with browser resize if necessary
+* add/verify video support
 
 ## Authors
 

@@ -51,7 +51,7 @@ class ShopBox
       $('.shopbox').addClass('shopbox-hidden');
       $('.shopbox-main').removeClass('shopbox-visible');
       $('.shopbox').removeClass 'shopbox-loaded'
-  
+
   @startSpinner = () ->
     $('.shopbox-spinner').addClass 'shopbox-visible'
     $('.shopbox-main').removeClass 'shopbox-visible'
@@ -68,17 +68,17 @@ class ShopBox
   @setTypeStyle = (style) ->
     $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
 
-  @loadFromUrl = (urlOrContent, options, element) ->
+  @loadFromContent = (urlOrContent, options, element) ->
     if urlOrContent == undefined
       urlOrContent = element.attr 'href'
-    type = options['type'] || @typeFromUrl(urlOrContent)
+    type = options.type || @typeFromContent(urlOrContent)
     $('.shopbox-content').css({width: '', height: ''})
     $('.shopbox-main').css({'margin-left': '', 'margin-top': ''})
     ShopBox.show()
 
-    if type != 'content'
+    if type in ['image', 'iframe']
       url = "#{urlOrContent}?#{Math.random() * 1000000000000000000}"
-      ShopBox.startSpinner()
+    ShopBox.startSpinner()
 
     @setTypeStyle("shopbox-#{type}")
     switch type
@@ -100,13 +100,13 @@ class ShopBox
           ShopBox.finishSpinner(event)
         iframe.attr 'src', url
         $('.shopbox .shopbox-content').html iframe
-      # when 'video'
+      # when 'object' or 'html'
       else
         div = $('<div />').css({display:'none'})
         $('.shopbox .shopbox-content').html(div)
         div.ready () ->
           setTimeout (->
-            $('.shopbox-main').css({'margin-left': -div.width() / 2 - 10, 'margin-top': -div.height() / 2 - 10})
+            ShopBox.setSize(height: options.height || div.height(), width: options.width || div.width())
             div.remove()
             ShopBox.finishSpinner(urlOrContent)
           ), 0
@@ -121,27 +121,30 @@ class ShopBox
     content = $('.shopbox-content')
     content.css dimensions
     $('.shopbox-main').css({'margin-left': -dimensions.width / 2 - 10, 'margin-top': -dimensions.height / 2 - 10})
-      
-  @typeFromUrl = (url) ->
-    image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
-    ext = url.split('.').pop().toLowerCase()
+
+  image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
+
+  @typeFromContent = (urlOrContent) ->
+    if urlOrContent.nodeType? || urlOrContent instanceof jQuery
+      return 'object'
+    ext = urlOrContent.split('.').pop().toLowerCase()
     if image_exts.indexOf(ext) >= 0
       return 'image'
-    else if url.match(/^https?\:\/\/\S+$/) 
+    else if urlOrContent.match(/^https?\:\/\/\S+$/)
       return 'iframe'
     else
       return 'html'
-      
+
 window.ShopBox = ShopBox
 
-# extend jQuery    
-jQuery.fn.shopbox = (url, options = {}) ->
+# extend jQuery
+jQuery.fn.shopbox = (urlOrContent, options = {}) ->
   elements = this
   ShopBox.init()
   elements.each (i, element) ->
-    $(element).click (event) -> 
+    $(element).click (event) ->
       event.preventDefault()
-      ShopBox.loadFromUrl(url, options, $(element))
+      ShopBox.loadFromContent(urlOrContent, options, $(element))
 
 jQuery.fn.transitionEnd = (func) ->
   @one 'TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func

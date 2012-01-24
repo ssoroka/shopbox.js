@@ -5,13 +5,14 @@
     <script type="text/javascript">
       $(document).ready(function(){
         // $('#image_link').shopbox('http://cvcl.mit.edu/hybrid/cat2.jpg');
-        
+
         $('#image_link').shopbox();
         $('#large_image_link').shopbox();
-        
         $('#content_link').shopbox('<h1>Serious cat is not amused.</h1> <img src="http://cvcl.mit.edu/hybrid/cat2.jpg">');
-
         $('#iframe_link').shopbox('http://shop.shopyasukoazuma.com/', {width: 800, height: 600});
+
+        testElement = $('<ul><li>Hello</li><li>World</li></ul>');
+        $('#node_link').shopbox(testElement, {width: 800, height: 600});
       });
     </script>
     <link href="./shopbox.css" rel='stylesheet' type='text/css' />
@@ -21,5 +22,6 @@
     <a href="http://www.free-pictures-photos.com/sunset/sunset-14.jpg" id="large_image_link">large image link</a>
     <a href="#" id="content_link">content link</a>
     <a href="#" id="iframe_link">iframe link</a>
+    <a href="#" id="node_link">node link</a>
   </body>
 </html>

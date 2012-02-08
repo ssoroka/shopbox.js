@@ -1,6 +1,7 @@
 (function() {
   var ShopBox;
   ShopBox = (function() {
+    var image_exts;
     function ShopBox() {}
     ShopBox.box = null;
     ShopBox.template = '\
@@ -71,12 +72,12 @@
     ShopBox.setTypeStyle = function(style) {
       return $('.shopbox-background').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
     };
-    ShopBox.loadFromUrl = function(urlOrContent, options, element) {
+    ShopBox.loadFromContent = function(urlOrContent, options, element) {
       var dimensions, div, iframe, img, type, url;
       if (urlOrContent === void 0) {
         urlOrContent = element.attr('href');
       }
-      type = options['type'] || this.typeFromUrl(urlOrContent);
+      type = options.type || this.typeFromContent(urlOrContent);
       $('.shopbox-content').css({
         width: '',
         height: ''
@@ -86,10 +87,10 @@
         'margin-top': ''
       });
       ShopBox.show();
-      if (type !== 'content') {
+      if (type === 'image' || type === 'iframe') {
         url = "" + urlOrContent + "?" + (Math.random() * 1000000000000000000);
-        ShopBox.startSpinner();
       }
+      ShopBox.startSpinner();
       this.setTypeStyle("shopbox-" + type);
       switch (type) {
         case 'image':
@@ -125,9 +126,9 @@
           $('.shopbox-background .shopbox-content').html(div);
           div.ready(function() {
             return setTimeout((function() {
-              $('.shopbox-main').css({
-                'margin-left': -div.width() / 2 - 10,
-                'margin-top': -div.height() / 2 - 10
+              ShopBox.setSize({
+                height: options.height || div.height(),
+                width: options.width || div.width()
               });
               div.remove();
               return ShopBox.finishSpinner(urlOrContent);
@@ -153,13 +154,16 @@
         'margin-top': -dimensions.height / 2 - 10
       });
     };
-    ShopBox.typeFromUrl = function(url) {
-      var ext, image_exts;
-      image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
-      ext = url.split('.').pop().toLowerCase();
+    image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
+    ShopBox.typeFromContent = function(urlOrContent) {
+      var ext;
+      if ((urlOrContent.nodeType != null) || urlOrContent instanceof jQuery) {
+        return 'object';
+      }
+      ext = urlOrContent.split('.').pop().toLowerCase();
       if (image_exts.indexOf(ext) >= 0) {
         return 'image';
-      } else if (url.match(/^https?\:\/\/\S+$/)) {
+      } else if (urlOrContent.match(/^https?\:\/\/\S+$/)) {
         return 'iframe';
       } else {
         return 'html';
@@ -168,7 +172,7 @@
     return ShopBox;
   })();
   window.ShopBox = ShopBox;
-  jQuery.fn.shopbox = function(url, options) {
+  jQuery.fn.shopbox = function(urlOrContent, options) {
     var elements;
     if (options == null) {
       options = {};
@@ -178,7 +182,7 @@
     return elements.each(function(i, element) {
       return $(element).click(function(event) {
         event.preventDefault();
-        return ShopBox.loadFromUrl(url, options, $(element));
+        return ShopBox.loadFromContent(urlOrContent, options, $(element));
       });
     });
   };

@@ -24,6 +24,10 @@ Attach shopbox to a specific id and load a url in an iframe when it's clicked in
 
     $('#iframe_link').shopbox('http://shop.shopyasukoazuma.com/', {width: 800, height: 600});
 
+Attach shopbox to a specific id and have it pull in some nodes already in the DOM:
+
+    $('#iframe_link').shopbox($('#hidden_content'), {width: 800, height: 600});
+
 Alternatively, you can pass the width and height using data attributes, and the target url using href:
 
     <a href="http://shop.shopyasukoazuma.com/" id="iframe_link" data-shopbox-width='800' data-shopbox-height='600'>iframe link</a>

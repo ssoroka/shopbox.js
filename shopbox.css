@@ -1,7 +1,7 @@
 /* Transparent BG */
-.shopbox { -webkit-transition: all 0.15s ease-in-out; -moz-transition: all 0.15s ease-in-out; -ms-transition: all 0.15s ease-in-out; position: absolute; top: 0; bottom: 0; left: 0; right: 0; opacity: 0; background: rgba(0,0,0,0.7); }
+.shopbox-background { -webkit-transition: all 0.15s ease-in-out; -moz-transition: all 0.15s ease-in-out; -ms-transition: all 0.15s ease-in-out; position: absolute; top: 0; bottom: 0; left: 0; right: 0; opacity: 0; background: rgba(0,0,0,0.7); }
 
-.shopbox.shopbox-hidden { display: none; }
+.shopbox-background.shopbox-hidden { display: none; }
 
 /* Main Modal Window */
 .shopbox-main {
@@ -65,10 +65,10 @@
 }
 
 /* Transparent BG - Animation End */
-.shopbox.shopbox-visible { opacity: 1; }
+.shopbox-background.shopbox-visible { opacity: 1; }
 
 /* Main Modal Window - Animation End */
-.shopbox.shopbox-visible.shopbox-loaded .shopbox-main {
+.shopbox-background.shopbox-visible.shopbox-loaded .shopbox-main {
 	/*
 	transform: scale(1) rotateY(0deg) rotateX(0deg);
 	-webkit-transform: scale(1) rotateY(0deg) rotateX(0deg);

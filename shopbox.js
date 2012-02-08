@@ -4,7 +4,7 @@
     function ShopBox() {}
     ShopBox.box = null;
     ShopBox.template = '\
-    <div class="shopbox shopbox-hidden">\
+    <div class="shopbox-background shopbox-hidden">\
       <div class="shopbox-spinner"></div>\
       <div class="shopbox-main">\
         <div class="shopbox-inner">\
@@ -15,7 +15,7 @@
     </div>\
   ';
     ShopBox.init = function() {
-      if ($('.shopbox').length === 0) {
+      if ($('.shopbox-background').length === 0) {
         $('body').prepend(this.template);
         $('.shopbox-close').click(ShopBox.closeBox);
         $(window).bind('keydown', function(event) {
@@ -23,7 +23,7 @@
             return ShopBox.closeBox();
           }
         });
-        return $('.shopbox, .shopbox-spinner').bind('click', function(event) {
+        return $('.shopbox-background, .shopbox-spinner').bind('click', function(event) {
           if (event.target === this) {
             return ShopBox.closeBox();
           }
@@ -31,9 +31,9 @@
       }
     };
     ShopBox.show = function(content) {
-      $('.shopbox').removeClass('shopbox-hidden');
+      $('.shopbox-background').removeClass('shopbox-hidden');
       return setTimeout((function() {
-        return $(".shopbox").addClass("shopbox-visible");
+        return $(".shopbox-background").addClass("shopbox-visible");
       }), 0);
     };
     ShopBox.closeBox = function(event) {
@@ -43,14 +43,14 @@
       return ShopBox.hide();
     };
     ShopBox.hide = function() {
-      if (!$('.shopbox').hasClass('shopbox-visible')) {
+      if (!$('.shopbox-background').hasClass('shopbox-visible')) {
         return;
       }
-      $('.shopbox').removeClass('shopbox-visible');
-      return $('.shopbox').transitionEnd(function() {
-        $('.shopbox').addClass('shopbox-hidden');
+      $('.shopbox-background').removeClass('shopbox-visible');
+      return $('.shopbox-background').transitionEnd(function() {
+        $('.shopbox-background').addClass('shopbox-hidden');
         $('.shopbox-main').removeClass('shopbox-visible');
-        return $('.shopbox').removeClass('shopbox-loaded');
+        return $('.shopbox-background').removeClass('shopbox-loaded');
       });
     };
     ShopBox.startSpinner = function() {
@@ -65,11 +65,11 @@
         spinner.removeClass('shopbox-visible');
       }
       $('.shopbox-main').addClass('shopbox-visible');
-      $('.shopbox .shopbox-content').html(content);
-      return $('.shopbox').addClass('shopbox-loaded');
+      $('.shopbox-background .shopbox-content').html(content);
+      return $('.shopbox-background').addClass('shopbox-loaded');
     };
     ShopBox.setTypeStyle = function(style) {
-      return $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
+      return $('.shopbox-background').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
     };
     ShopBox.loadFromUrl = function(urlOrContent, options, element) {
       var dimensions, div, iframe, img, type, url;
@@ -117,12 +117,12 @@
             return ShopBox.finishSpinner(event);
           });
           iframe.attr('src', url);
-          return $('.shopbox .shopbox-content').html(iframe);
+          return $('.shopbox-background .shopbox-content').html(iframe);
         default:
           div = $('<div />').css({
             display: 'none'
           });
-          $('.shopbox .shopbox-content').html(div);
+          $('.shopbox-background .shopbox-content').html(div);
           div.ready(function() {
             return setTimeout((function() {
               $('.shopbox-main').css({

@@ -34,7 +34,7 @@ shopbox_example.html uses some of these examples
 
 ## Runtime Dependencies
 
-* jQuery
+Only jQuery
 
 ## Development Dependencies
 

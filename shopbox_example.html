@@ -4,10 +4,7 @@
     <script type="text/javascript" src="shopbox.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
-        // $('#image_link').shopbox('http://cvcl.mit.edu/hybrid/cat2.jpg');
-        
-        $('#image_link').shopbox();
-        $('#large_image_link').shopbox();
+        $('.shopbox').shopbox();
         
         $('#content_link').shopbox('<h1>Serious cat is not amused.</h1> <img src="http://cvcl.mit.edu/hybrid/cat2.jpg">');
 
@@ -17,9 +14,10 @@
     <link href="./shopbox.css" rel='stylesheet' type='text/css' />
   </head>
   <body>
-    <a href="http://cvcl.mit.edu/hybrid/cat2.jpg" id="image_link">image link</a>
-    <a href="http://www.free-pictures-photos.com/sunset/sunset-14.jpg" id="large_image_link">large image link</a>
+    <a href="http://cvcl.mit.edu/hybrid/cat2.jpg" id="image_link" class='shopbox'>image link</a>
+    <a href="http://www.free-pictures-photos.com/sunset/sunset-14.jpg" id="large_image_link" class='shopbox'>large image link</a>
     <a href="#" id="content_link">content link</a>
-    <a href="#" id="iframe_link">iframe link</a>
+    <a href="#" id="iframe_link" data-shopbox-width='800' data-shopbox-height='600'>iframe link</a>
+    <a href="http://localhost:3000/carts/3/448c3fcdf54491b377c4f4abb292b4ce/create_order" id="slow_iframe_link" class='shopbox'>slow iframe link</a>
   </body>
 </html>

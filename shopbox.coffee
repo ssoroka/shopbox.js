@@ -10,7 +10,7 @@ class ShopBox
   @box = null
 
   @template = '
-    <div class="shopbox shopbox-hidden">
+    <div class="shopbox-background shopbox-hidden">
       <div class="shopbox-spinner"></div>
       <div class="shopbox-main">
         <div class="shopbox-inner">
@@ -22,7 +22,7 @@ class ShopBox
   '
 
   @init = () ->
-    if $('.shopbox').length == 0
+    if $('.shopbox-background').length == 0
       $('body').prepend @template
       # close on X click
       $('.shopbox-close').click ShopBox.closeBox
@@ -30,14 +30,14 @@ class ShopBox
       $(window).bind 'keydown', (event) ->
         ShopBox.closeBox() if event.which == 27
       # close on click elsewhere
-      $('.shopbox, .shopbox-spinner').bind 'click', (event) ->
+      $('.shopbox-background, .shopbox-spinner').bind 'click', (event) ->
         if event.target == this
           ShopBox.closeBox()
 
   @show = (content) ->
-    $('.shopbox').removeClass('shopbox-hidden')
+    $('.shopbox-background').removeClass('shopbox-hidden')
     setTimeout (->
-      $(".shopbox").addClass "shopbox-visible"
+      $(".shopbox-background").addClass "shopbox-visible"
     ), 0
 
   @closeBox = (event) ->
@@ -45,12 +45,12 @@ class ShopBox
     ShopBox.hide()
 
   @hide = () ->
-    return unless $('.shopbox').hasClass('shopbox-visible')
-    $('.shopbox').removeClass('shopbox-visible')
-    $('.shopbox').transitionEnd ->
-      $('.shopbox').addClass('shopbox-hidden');
+    return unless $('.shopbox-background').hasClass('shopbox-visible')
+    $('.shopbox-background').removeClass('shopbox-visible')
+    $('.shopbox-background').transitionEnd ->
+      $('.shopbox-background').addClass('shopbox-hidden');
       $('.shopbox-main').removeClass('shopbox-visible');
-      $('.shopbox').removeClass 'shopbox-loaded'
+      $('.shopbox-background').removeClass 'shopbox-loaded'
   
   @startSpinner = () ->
     $('.shopbox-spinner').addClass 'shopbox-visible'
@@ -62,11 +62,11 @@ class ShopBox
     if spinner.hasClass('shopbox-visible')
       spinner.removeClass 'shopbox-visible'
     $('.shopbox-main').addClass 'shopbox-visible'
-    $('.shopbox .shopbox-content').html content
-    $('.shopbox').addClass 'shopbox-loaded'
+    $('.shopbox-background .shopbox-content').html content
+    $('.shopbox-background').addClass 'shopbox-loaded'
 
   @setTypeStyle = (style) ->
-    $('.shopbox').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
+    $('.shopbox-background').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
 
   @loadFromUrl = (urlOrContent, options, element) ->
     if urlOrContent == undefined
@@ -99,11 +99,11 @@ class ShopBox
           iframe.show()
           ShopBox.finishSpinner(event)
         iframe.attr 'src', url
-        $('.shopbox .shopbox-content').html iframe
+        $('.shopbox-background .shopbox-content').html iframe
       # when 'video'
       else
         div = $('<div />').css({display:'none'})
-        $('.shopbox .shopbox-content').html(div)
+        $('.shopbox-background .shopbox-content').html(div)
         div.ready () ->
           setTimeout (->
             $('.shopbox-main').css({'margin-left': -div.width() / 2 - 10, 'margin-top': -div.height() / 2 - 10})

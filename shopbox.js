@@ -1,96 +1,95 @@
 (function() {
   var ShopBox;
+
   ShopBox = (function() {
     var image_exts;
+
     function ShopBox() {}
+
     ShopBox.box = null;
-    ShopBox.template = '\
-    <div class="shopbox-background shopbox-hidden">\
-      <div class="shopbox-spinner"></div>\
-      <div class="shopbox-main">\
-        <div class="shopbox-inner">\
-          <a class="shopbox-close" href="#">Close</a>\
-          <div class="shopbox-content"></div>\
-        </div>\
-      </div>\
-    </div>\
-  ';
+
+    ShopBox.template = '<div id="shopbox" class="shopbox-hidden"><div id="shopbox-spinner" class="shopbox-spinner">Loading</div><span id="shopbox-loading-message">Click anywhere to close</span><div id="shopbox-main"><a id="shopbox-close" href="#">Close</a><div id="shopbox-content"></div></div></div>';
+
     ShopBox.init = function() {
-      if ($('.shopbox-background').length === 0) {
+      if ($('#shopbox').length === 0) {
         $('body').prepend(this.template);
-        $('.shopbox-close').click(ShopBox.closeBox);
+        ShopBox.wrapper = $('#shopbox');
+        ShopBox.spinner = $('#shopbox-spinner');
+        ShopBox.loading_message = $('#shopbox-loading-message');
+        ShopBox.main = $('#shopbox-main');
+        ShopBox.close = $('#shopbox-close');
+        ShopBox.content = $('#shopbox-content');
+        ShopBox.class_visible = 'shopbox-visible';
+        ShopBox.class_hidden = 'shopbox-hidden';
+        ShopBox.class_loaded = 'shopbox-loaded';
+        this.close.click(ShopBox.closeBox);
         $(window).bind('keydown', function(event) {
-          if (event.which === 27) {
-            return ShopBox.closeBox();
-          }
+          if (event.which === 27) return ShopBox.closeBox();
         });
-        return $('.shopbox-background, .shopbox-spinner').bind('click', function(event) {
-          if (event.target === this) {
-            return ShopBox.closeBox();
-          }
+        return $(this.wrapper, this.spinner).bind('click', function(event) {
+          if (event.target === this) return ShopBox.closeBox();
         });
       }
     };
+
     ShopBox.show = function(content) {
-      $('.shopbox-background').removeClass('shopbox-hidden');
+      ShopBox.wrapper.removeClass(ShopBox.class_hidden);
       return setTimeout((function() {
-        return $(".shopbox-background").addClass("shopbox-visible");
+        return ShopBox.wrapper.addClass(ShopBox.class_visible);
       }), 0);
     };
+
     ShopBox.closeBox = function(event) {
-      if (event) {
-        event.preventDefault();
-      }
+      if (event) event.preventDefault();
       return ShopBox.hide();
     };
+
     ShopBox.hide = function() {
-      if (!$('.shopbox-background').hasClass('shopbox-visible')) {
-        return;
-      }
-      $('.shopbox-background').removeClass('shopbox-visible');
-      return $('.shopbox-background').transitionEnd(function() {
-        $('.shopbox-background').addClass('shopbox-hidden');
-        $('.shopbox-main').removeClass('shopbox-visible');
-        return $('.shopbox-background').removeClass('shopbox-loaded');
+      if (!ShopBox.wrapper.hasClass(ShopBox.class_visible)) return;
+      ShopBox.wrapper.removeClass(ShopBox.class_visible);
+      return ShopBox.wrapper.transitionEnd(function() {
+        ShopBox.wrapper.addClass(ShopBox.class_hidden).removeClass(ShopBox.class_loaded);
+        return ShopBox.main.removeClass(ShopBox.class_visible);
       });
     };
+
     ShopBox.startSpinner = function() {
-      $('.shopbox-spinner').addClass('shopbox-visible');
-      return $('.shopbox-main').removeClass('shopbox-visible');
+      ShopBox.spinner.addClass(ShopBox.class_visible);
+      ShopBox.loading_message.addClass(ShopBox.class_visible);
+      return ShopBox.main.removeClass(ShopBox.class_visible);
     };
+
     ShopBox.finishSpinner = function(event) {
-      var content, spinner;
+      var content;
       content = event.target || event;
-      spinner = $('.shopbox-spinner');
-      if (spinner.hasClass('shopbox-visible')) {
-        spinner.removeClass('shopbox-visible');
-      }
-      $('.shopbox-main').addClass('shopbox-visible');
-      $('.shopbox-background .shopbox-content').html(content);
-      return $('.shopbox-background').addClass('shopbox-loaded');
+      ShopBox.loading_message.removeClass(ShopBox.class_visible);
+      ShopBox.spinner.removeClass(ShopBox.class_visible);
+      ShopBox.main.addClass(ShopBox.class_visible);
+      ShopBox.content.html(content);
+      return ShopBox.wrapper.addClass(ShopBox.class_loaded);
     };
+
     ShopBox.setTypeStyle = function(style) {
-      return $('.shopbox-background').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
+      return ShopBox.wrapper.removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
     };
+
     ShopBox.loadFromContent = function(urlOrContent, options, element) {
       var dimensions, div, iframe, img, type, url;
-      if (urlOrContent === void 0) {
-        urlOrContent = element.attr('href');
-      }
-      type = options.type || this.typeFromContent(urlOrContent);
-      $('.shopbox-content').css({
-        width: '',
-        height: ''
+      if (urlOrContent === void 0) urlOrContent = element.attr('href');
+      type = options['type'] || this.typeFromContent(urlOrContent);
+      ShopBox.content.css({
+        'width': '',
+        'height': ''
       });
-      $('.shopbox-main').css({
+      ShopBox.main.css({
         'margin-left': '',
         'margin-top': ''
       });
       ShopBox.show();
-      if (type === 'image' || type === 'iframe') {
+      if (type !== 'content') {
         url = "" + urlOrContent + "?" + (Math.random() * 1000000000000000000);
+        ShopBox.startSpinner();
       }
-      ShopBox.startSpinner();
       this.setTypeStyle("shopbox-" + type);
       switch (type) {
         case 'image':
@@ -118,18 +117,19 @@
             return ShopBox.finishSpinner(event);
           });
           iframe.attr('src', url);
-          return $('.shopbox-background .shopbox-content').html(iframe);
+          return ShopBox.content.html(iframe);
         default:
           div = $('<div />').css({
             display: 'none'
           });
-          $('.shopbox-background .shopbox-content').html(div);
+          dimensions = {
+            height: options.height || 400,
+            width: options.width || 600
+          };
+          ShopBox.content.html(div);
           div.ready(function() {
             return setTimeout((function() {
-              ShopBox.setSize({
-                height: options.height || div.height(),
-                width: options.width || div.width()
-              });
+              ShopBox.setSize(dimensions);
               div.remove();
               return ShopBox.finishSpinner(urlOrContent);
             }), 0);
@@ -137,24 +137,22 @@
           return div.html(urlOrContent);
       }
     };
+
     ShopBox.setSize = function(dimensions) {
-      var content, max_height, max_width;
+      var max_height, max_width;
       max_width = document.width - 50;
       max_height = document.height - 50;
-      if (max_width < dimensions.width) {
-        dimensions.width = max_width;
-      }
-      if (max_height < dimensions.height) {
-        dimensions.height = max_height;
-      }
-      content = $('.shopbox-content');
-      content.css(dimensions);
-      return $('.shopbox-main').css({
+      if (max_width < dimensions.width) dimensions.width = max_width;
+      if (max_height < dimensions.height) dimensions.height = max_height;
+      ShopBox.content.css(dimensions);
+      return ShopBox.main.css({
         'margin-left': -dimensions.width / 2 - 10,
         'margin-top': -dimensions.height / 2 - 10
       });
     };
+
     image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
+
     ShopBox.typeFromContent = function(urlOrContent) {
       var ext;
       if ((urlOrContent.nodeType != null) || urlOrContent instanceof jQuery) {
@@ -169,14 +167,16 @@
         return 'html';
       }
     };
+
     return ShopBox;
+
   })();
+
   window.ShopBox = ShopBox;
+
   jQuery.fn.shopbox = function(urlOrContent, options) {
     var elements;
-    if (options == null) {
-      options = {};
-    }
+    if (options == null) options = {};
     elements = this;
     ShopBox.init();
     return elements.each(function(i, element) {
@@ -186,7 +186,9 @@
       });
     });
   };
+
   jQuery.fn.transitionEnd = function(func) {
     return this.one('TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func);
   };
+
 }).call(this);

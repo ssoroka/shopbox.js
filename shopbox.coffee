@@ -9,35 +9,37 @@
 class ShopBox
   @box = null
 
-  @template = '
-    <div class="shopbox-background shopbox-hidden">
-      <div class="shopbox-spinner"></div>
-      <div class="shopbox-main">
-        <div class="shopbox-inner">
-          <a class="shopbox-close" href="#">Close</a>
-          <div class="shopbox-content"></div>
-        </div>
-      </div>
-    </div>
-  '
+  @template = '<div id="shopbox" class="shopbox-hidden"><div id="shopbox-spinner" class="shopbox-spinner">Loading</div><span id="shopbox-loading-message">Click anywhere to close</span><div id="shopbox-main"><a id="shopbox-close" href="#">Close</a><div id="shopbox-content"></div></div></div>'
 
   @init = () ->
-    if $('.shopbox-background').length == 0
+    if $('#shopbox').length == 0
       $('body').prepend @template
+
+      ShopBox.wrapper = $('#shopbox')
+      ShopBox.spinner = $('#shopbox-spinner')
+      ShopBox.loading_message = $('#shopbox-loading-message')
+      ShopBox.main = $('#shopbox-main')
+      ShopBox.close = $('#shopbox-close')
+      ShopBox.content = $('#shopbox-content')
+      
+      ShopBox.class_visible = 'shopbox-visible'
+      ShopBox.class_hidden = 'shopbox-hidden' 
+      ShopBox.class_loaded = 'shopbox-loaded'  
+
       # close on X click
-      $('.shopbox-close').click ShopBox.closeBox
+      @close.click ShopBox.closeBox
       # close on escape
       $(window).bind 'keydown', (event) ->
         ShopBox.closeBox() if event.which == 27
       # close on click elsewhere
-      $('.shopbox-background, .shopbox-spinner').bind 'click', (event) ->
+      $(@wrapper,@spinner).bind 'click', (event) ->
         if event.target == this
           ShopBox.closeBox()
 
   @show = (content) ->
-    $('.shopbox-background').removeClass('shopbox-hidden')
+    ShopBox.wrapper.removeClass(ShopBox.class_hidden)
     setTimeout (->
-      $(".shopbox-background").addClass "shopbox-visible"
+      ShopBox.wrapper.addClass ShopBox.class_visible
     ), 0
 
   @closeBox = (event) ->
@@ -45,40 +47,39 @@ class ShopBox
     ShopBox.hide()
 
   @hide = () ->
-    return unless $('.shopbox-background').hasClass('shopbox-visible')
-    $('.shopbox-background').removeClass('shopbox-visible')
-    $('.shopbox-background').transitionEnd ->
-      $('.shopbox-background').addClass('shopbox-hidden');
-      $('.shopbox-main').removeClass('shopbox-visible');
-      $('.shopbox-background').removeClass 'shopbox-loaded'
+    return unless ShopBox.wrapper.hasClass ShopBox.class_visible
+    ShopBox.wrapper.removeClass ShopBox.class_visible
+    ShopBox.wrapper.transitionEnd ->
+      ShopBox.wrapper.addClass(ShopBox.class_hidden).removeClass ShopBox.class_loaded
+      ShopBox.main.removeClass ShopBox.class_visible
 
   @startSpinner = () ->
-    $('.shopbox-spinner').addClass 'shopbox-visible'
-    $('.shopbox-main').removeClass 'shopbox-visible'
+    ShopBox.spinner.addClass ShopBox.class_visible
+    ShopBox.loading_message.addClass ShopBox.class_visible
+    ShopBox.main.removeClass ShopBox.class_visible
 
   @finishSpinner = (event) ->
     content = event.target || event
-    spinner = $('.shopbox-spinner')
-    if spinner.hasClass('shopbox-visible')
-      spinner.removeClass 'shopbox-visible'
-    $('.shopbox-main').addClass 'shopbox-visible'
-    $('.shopbox-background .shopbox-content').html content
-    $('.shopbox-background').addClass 'shopbox-loaded'
+    ShopBox.loading_message.removeClass ShopBox.class_visible
+    ShopBox.spinner.removeClass ShopBox.class_visible
+    ShopBox.main.addClass ShopBox.class_visible
+    ShopBox.content.html content
+    ShopBox.wrapper.addClass ShopBox.class_loaded
 
   @setTypeStyle = (style) ->
-    $('.shopbox-background').removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
+    ShopBox.wrapper.removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
 
   @loadFromContent = (urlOrContent, options, element) ->
     if urlOrContent == undefined
       urlOrContent = element.attr 'href'
-    type = options.type || @typeFromContent(urlOrContent)
-    $('.shopbox-content').css({width: '', height: ''})
-    $('.shopbox-main').css({'margin-left': '', 'margin-top': ''})
+    type = options['type'] || @typeFromContent(urlOrContent)
+    ShopBox.content.css({'width': '', 'height': ''})
+    ShopBox.main.css({'margin-left': '', 'margin-top': ''})
     ShopBox.show()
 
-    if type in ['image', 'iframe']
+    if type != 'content'
       url = "#{urlOrContent}?#{Math.random() * 1000000000000000000}"
-    ShopBox.startSpinner()
+      ShopBox.startSpinner()
 
     @setTypeStyle("shopbox-#{type}")
     switch type
@@ -99,14 +100,15 @@ class ShopBox
           iframe.show()
           ShopBox.finishSpinner(event)
         iframe.attr 'src', url
-        $('.shopbox-background .shopbox-content').html iframe
-      # when 'object' or 'html'
+        ShopBox.content.html iframe
+      # when 'video'
       else
         div = $('<div />').css({display:'none'})
-        $('.shopbox-background .shopbox-content').html(div)
+        dimensions = {height: options.height || 400, width: options.width || 600}
+        ShopBox.content.html(div)
         div.ready () ->
-          setTimeout (->
-            ShopBox.setSize(height: options.height || div.height(), width: options.width || div.width())
+          setTimeout (-> 
+            ShopBox.setSize(dimensions)
             div.remove()
             ShopBox.finishSpinner(urlOrContent)
           ), 0
@@ -118,22 +120,21 @@ class ShopBox
     dimensions.width = max_width if max_width < dimensions.width
     dimensions.height = max_height if max_height < dimensions.height
 
-    content = $('.shopbox-content')
-    content.css dimensions
-    $('.shopbox-main').css({'margin-left': -dimensions.width / 2 - 10, 'margin-top': -dimensions.height / 2 - 10})
+    ShopBox.content.css dimensions
+    ShopBox.main.css({'margin-left': -dimensions.width / 2 - 10, 'margin-top': -dimensions.height / 2 - 10})
 
   image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif']
 
   @typeFromContent = (urlOrContent) ->
     if urlOrContent.nodeType? || urlOrContent instanceof jQuery
-      return 'object'
-    ext = urlOrContent.split('.').pop().toLowerCase()
-    if image_exts.indexOf(ext) >= 0
-      return 'image'
-    else if urlOrContent.match(/^https?\:\/\/\S+$/)
-      return 'iframe'
-    else
-      return 'html'
+        return 'object'
+      ext = urlOrContent.split('.').pop().toLowerCase()
+      if image_exts.indexOf(ext) >= 0
+        return 'image'
+      else if urlOrContent.match(/^https?\:\/\/\S+$/)
+        return 'iframe'
+      else
+        return 'html'
 
 window.ShopBox = ShopBox
 

@@ -1,106 +1,112 @@
 (function() {
   var ShopBox;
-
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   ShopBox = (function() {
     var image_exts;
-
     function ShopBox() {}
-
     ShopBox.box = null;
-
     ShopBox.template = '<div id="shopbox" class="shopbox-hidden"><div id="shopbox-spinner" class="shopbox-spinner">Loading</div><span id="shopbox-loading-message">Click anywhere to close</span><div id="shopbox-main"><a id="shopbox-close" href="#">Close</a><div id="shopbox-content"></div></div></div>';
-
-    ShopBox.init = function() {
+    ShopBox.init = __bind(function() {
       if ($('#shopbox').length === 0) {
         $('body').prepend(this.template);
-        ShopBox.wrapper = $('#shopbox');
-        ShopBox.spinner = $('#shopbox-spinner');
-        ShopBox.loading_message = $('#shopbox-loading-message');
-        ShopBox.main = $('#shopbox-main');
-        ShopBox.close = $('#shopbox-close');
-        ShopBox.content = $('#shopbox-content');
-        ShopBox.class_visible = 'shopbox-visible';
-        ShopBox.class_hidden = 'shopbox-hidden';
-        ShopBox.class_loaded = 'shopbox-loaded';
-        this.close.click(ShopBox.closeBox);
-        $(window).bind('keydown', function(event) {
-          if (event.which === 27) return ShopBox.closeBox();
-        });
-        return $(this.wrapper, this.spinner).bind('click', function(event) {
-          if (event.target === this) return ShopBox.closeBox();
-        });
+        this.wrapper = $('#shopbox');
+        this.spinner = this.wrapper.find('#shopbox-spinner');
+        this.loading_message = this.wrapper.find('#shopbox-loading-message');
+        this.main = this.wrapper.find('#shopbox-main');
+        this.close = this.main.find('#shopbox-close');
+        this.content = this.main.find('#shopbox-content');
+        this.visible = 'shopbox-visible';
+        this.hidden = 'shopbox-hidden';
+        this.loaded = 'shopbox-loaded';
+        this.close.click(this.closeBox);
+        $(window).bind('keydown', __bind(function(event) {
+          if (event.which === 27) {
+            return this.closeBox();
+          }
+        }, this));
+        return $(this.wrapper, this.spinner).bind('click', __bind(function(event) {
+          if (event.target === this.wrapper[0]) {
+            return this.closeBox();
+          }
+        }, this));
       }
-    };
-
-    ShopBox.show = function(content) {
-      ShopBox.wrapper.removeClass(ShopBox.class_hidden);
-      return setTimeout((function() {
-        return ShopBox.wrapper.addClass(ShopBox.class_visible);
-      }), 0);
-    };
-
-    ShopBox.closeBox = function(event) {
-      if (event) event.preventDefault();
-      return ShopBox.hide();
-    };
-
-    ShopBox.hide = function() {
-      if (!ShopBox.wrapper.hasClass(ShopBox.class_visible)) return;
-      ShopBox.wrapper.removeClass(ShopBox.class_visible);
-      return ShopBox.wrapper.transitionEnd(function() {
-        ShopBox.wrapper.addClass(ShopBox.class_hidden).removeClass(ShopBox.class_loaded);
-        return ShopBox.main.removeClass(ShopBox.class_visible);
-      });
-    };
-
-    ShopBox.startSpinner = function() {
-      ShopBox.spinner.addClass(ShopBox.class_visible);
-      ShopBox.loading_message.addClass(ShopBox.class_visible);
-      return ShopBox.main.removeClass(ShopBox.class_visible);
-    };
-
-    ShopBox.finishSpinner = function(event) {
+    }, ShopBox);
+    ShopBox.show = __bind(function(content) {
+      this.wrapper.removeClass(this.hidden);
+      return setTimeout((__bind(function() {
+        return this.wrapper.addClass(this.visible);
+      }, this)), 0);
+    }, ShopBox);
+    ShopBox.closeBox = __bind(function(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      return this.hide();
+    }, ShopBox);
+    ShopBox.hide = __bind(function() {
+      if (!this.wrapper.hasClass(this.visible)) {
+        return;
+      }
+      this.wrapper.removeClass(this.visible);
+      return this.wrapper.transitionEnd(__bind(function() {
+        this.wrapper.addClass(this.hidden).removeClass(this.loaded);
+        return this.main.removeClass(this.visible);
+      }, this));
+    }, ShopBox);
+    ShopBox.startSpinner = __bind(function() {
+      this.spinner.addClass(this.visible);
+      this.loading_message.addClass(this.visible);
+      return this.main.removeClass(this.visible);
+    }, ShopBox);
+    ShopBox.finishSpinner = __bind(function(event) {
       var content;
       content = event.target || event;
-      ShopBox.loading_message.removeClass(ShopBox.class_visible);
-      ShopBox.spinner.removeClass(ShopBox.class_visible);
-      ShopBox.main.addClass(ShopBox.class_visible);
-      ShopBox.content.html(content);
-      return ShopBox.wrapper.addClass(ShopBox.class_loaded);
-    };
-
-    ShopBox.setTypeStyle = function(style) {
-      return ShopBox.wrapper.removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
-    };
-
-    ShopBox.loadFromContent = function(urlOrContent, options, element) {
+      this.loading_message.removeClass(this.visible);
+      this.spinner.removeClass(this.visible);
+      this.main.addClass(this.visible);
+      this.content.html(content);
+      return this.wrapper.addClass(this.loaded);
+    }, ShopBox);
+    ShopBox.setTypeStyle = __bind(function(style) {
+      return this.wrapper.removeClass('shopbox-html shopbox-image shopbox-iframe shopbox-video').addClass(style);
+    }, ShopBox);
+    ShopBox.loadFromContent = __bind(function(urlOrContent, options, element) {
       var dimensions, div, iframe, img, type, url;
-      if (urlOrContent === void 0) urlOrContent = element.attr('href');
+      if (!(urlOrContent != null)) {
+        urlOrContent = element.attr('href');
+      }
       type = options['type'] || this.typeFromContent(urlOrContent);
-      ShopBox.content.css({
+      this.content.css({
         'width': '',
         'height': ''
       });
-      ShopBox.main.css({
+      this.main.css({
         'margin-left': '',
         'margin-top': ''
       });
-      ShopBox.show();
+      this.show();
       if (type !== 'content') {
-        url = "" + urlOrContent + "?" + (Math.random() * 1000000000000000000);
-        ShopBox.startSpinner();
+        url = urlOrContent;
+        if (options.cache === false) {
+          url = "" + url + "?" + (Math.random() * 1000000000000000000);
+        }
       }
+      this.startSpinner();
       this.setTypeStyle("shopbox-" + type);
+      console.log(type);
       switch (type) {
         case 'image':
           img = $('<img />');
-          img.load(function(event) {
-            ShopBox.setSize({
-              height: options.height || this.height,
-              width: options.width || this.width
+          img.hide();
+          this.content.html(img);
+          img.load(__bind(function(event) {
+            this.setSize({
+              height: options.height || img.height(),
+              width: options.width || img.width()
             });
-            return ShopBox.finishSpinner(event);
-          });
+            img.show();
+            return this.finishSpinner(event);
+          }, this));
           img.attr('src', url);
           return window.img = img;
         case 'iframe':
@@ -111,49 +117,51 @@
             width: options.width || 600
           };
           iframe.css(dimensions);
-          ShopBox.setSize(dimensions);
-          iframe.load(function(event) {
+          this.setSize(dimensions);
+          iframe.load(__bind(function(event) {
             iframe.show();
-            return ShopBox.finishSpinner(event);
-          });
+            return this.finishSpinner(event);
+          }, this));
           iframe.attr('src', url);
-          return ShopBox.content.html(iframe);
+          return this.content.html(iframe);
         default:
-          div = $('<div />').css({
-            display: 'none'
-          });
-          dimensions = {
-            height: options.height || 400,
-            width: options.width || 600
-          };
-          ShopBox.content.html(div);
-          div.ready(function() {
-            return setTimeout((function() {
-              ShopBox.setSize(dimensions);
+          div = $('<div />');
+          div.hide();
+          this.content.html(div);
+          div.ready(__bind(function() {
+            return setTimeout((__bind(function() {
+              this.setSize({
+                height: options.height || div.height(),
+                width: options.width || div.width()
+              });
               div.remove();
-              return ShopBox.finishSpinner(urlOrContent);
-            }), 0);
-          });
+              return this.finishSpinner(urlOrContent);
+            }, this)), 0);
+          }, this));
           return div.html(urlOrContent);
       }
-    };
-
-    ShopBox.setSize = function(dimensions) {
+    }, ShopBox);
+    ShopBox.setSize = __bind(function(dimensions) {
       var max_height, max_width;
       max_width = document.width - 50;
       max_height = document.height - 50;
-      if (max_width < dimensions.width) dimensions.width = max_width;
-      if (max_height < dimensions.height) dimensions.height = max_height;
-      ShopBox.content.css(dimensions);
-      return ShopBox.main.css({
+      dimensions.height || (dimensions.height = 400);
+      dimensions.width || (dimensions.width = 600);
+      if (max_width < dimensions.width) {
+        dimensions.width = max_width;
+      }
+      if (max_height < dimensions.height) {
+        dimensions.height = max_height;
+      }
+      console.log(dimensions);
+      this.content.css(dimensions);
+      return this.main.css({
         'margin-left': -dimensions.width / 2 - 10,
         'margin-top': -dimensions.height / 2 - 10
       });
-    };
-
+    }, ShopBox);
     image_exts = ['jpg', 'jpeg', 'png', 'bmp', 'gif'];
-
-    ShopBox.typeFromContent = function(urlOrContent) {
+    ShopBox.typeFromContent = __bind(function(urlOrContent) {
       var ext;
       if ((urlOrContent.nodeType != null) || urlOrContent instanceof jQuery) {
         return 'object';
@@ -166,17 +174,15 @@
       } else {
         return 'html';
       }
-    };
-
+    }, ShopBox);
     return ShopBox;
-
-  })();
-
+  }).call(this);
   window.ShopBox = ShopBox;
-
   jQuery.fn.shopbox = function(urlOrContent, options) {
     var elements;
-    if (options == null) options = {};
+    if (options == null) {
+      options = {};
+    }
     elements = this;
     ShopBox.init();
     return elements.each(function(i, element) {
@@ -186,9 +192,7 @@
       });
     });
   };
-
   jQuery.fn.transitionEnd = function(func) {
     return this.one('TransitionEnd webkitTransitionEnd transitionend oTransitionEnd', func);
   };
-
 }).call(this);

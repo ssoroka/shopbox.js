@@ -23,7 +23,7 @@
     <script type="text/javascript" src="shopbox.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){        
-        $('.shopbox').shopbox();
+        $('.shopbox').shopbox(null, {cache: false});
         $('#content_link').shopbox('<h1>Serious cat is not amused.</h1> <img src="http://cvcl.mit.edu/hybrid/cat2.jpg">');
         $('#iframe_link').shopbox('http://shop.shopyasukoazuma.com/', {width: 800, height: 600});
       });

@@ -93,7 +93,6 @@
       }
       this.startSpinner();
       this.setTypeStyle("shopbox-" + type);
-      console.log(type);
       switch (type) {
         case 'image':
           img = $('<img />');
@@ -143,8 +142,8 @@
     }, ShopBox);
     ShopBox.setSize = __bind(function(dimensions) {
       var max_height, max_width;
-      max_width = document.width - 50;
-      max_height = document.height - 50;
+      max_width = window.width - 50;
+      max_height = window.height - 50;
       dimensions.height || (dimensions.height = 400);
       dimensions.width || (dimensions.width = 600);
       if (max_width < dimensions.width) {
@@ -153,7 +152,6 @@
       if (max_height < dimensions.height) {
         dimensions.height = max_height;
       }
-      console.log(dimensions);
       this.content.css(dimensions);
       return this.main.css({
         'margin-left': -dimensions.width / 2 - 10,
@@ -169,7 +167,7 @@
       ext = urlOrContent.split('.').pop().toLowerCase();
       if (image_exts.indexOf(ext) >= 0) {
         return 'image';
-      } else if (urlOrContent.match(/^https?\:\/\/\S+$/)) {
+      } else if (urlOrContent.match(/^(https?\:\/\/\S+)|(\/\S+)$/)) {
         return 'iframe';
       } else {
         return 'html';

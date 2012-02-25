@@ -84,7 +84,6 @@ class ShopBox
     @startSpinner()
 
     @setTypeStyle("shopbox-#{type}")
-    console.log type
     switch type
       when 'image'
         img = $('<img />')
@@ -121,13 +120,12 @@ class ShopBox
         div.html(urlOrContent)
 
   @setSize = (dimensions) =>
-    max_width = document.width - 50
-    max_height = document.height - 50
+    max_width = window.width - 50
+    max_height = window.height - 50
     dimensions.height ||= 400
     dimensions.width ||= 600
     dimensions.width = max_width if max_width < dimensions.width
     dimensions.height = max_height if max_height < dimensions.height
-    console.log dimensions
     @content.css dimensions
     @main.css({'margin-left': -dimensions.width / 2 - 10, 'margin-top': -dimensions.height / 2 - 10})
 
@@ -139,7 +137,7 @@ class ShopBox
     ext = urlOrContent.split('.').pop().toLowerCase()
     if image_exts.indexOf(ext) >= 0
       return 'image'
-    else if urlOrContent.match(/^https?\:\/\/\S+$/)
+    else if urlOrContent.match(/^(https?\:\/\/\S+)|(\/\S+)$/)
       return 'iframe'
     else
       return 'html'

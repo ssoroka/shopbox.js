@@ -68,3 +68,8 @@ Only jQuery
 
 * Christoper Lobay
 * Steven Soroka
+
+With contributions from
+
+* Harry Brundage
+* Jesse Stuart
